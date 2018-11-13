@@ -10,7 +10,7 @@ We plan to use Reactjs for the Framework as well as Firebase for our database.
 * (5 points) Submitting proposal on Time
 
 ###Users (25 points)
-* (5 points) Users have a username and password
+* (5 points) Users have a username, name, and password
 * (5 points) Usernames are unique and passwords are salted and hashed
 * (5 points) Admin accounts exist
 * (5 points) Admins can promote users to admins
