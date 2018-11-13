@@ -18,7 +18,7 @@
 * (5 points) Admin users can create posts on news board
 * (5 points) Admins can edit/delete ANY posts on news board
 
-###Challenge Matches
+###Challenge Matches (10 points)
 * (5 points) Matches must be approved by both parties and an admin before ranking updates
 * (5 points) Match scores are verfied (best of 3 sets, first to 21 points, win by two)
 
