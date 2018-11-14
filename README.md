@@ -4,14 +4,14 @@ some administrative tasks like sending group posts and notifications. Rankings w
 challenge matches, which users can request. If User 1 wins a challenge match against User 2, their
 rankings will change accordingly. Administrators will be able to monitor activity on the website, as well as post
 on an announcement board.  
-We plan to use Reactjs for the Framework as well as Firebase for our database.
+We plan to use Reactjs for the framework as well as Firebase for our database.
 ##Grading Rubric
 ###Preparation (5 points)
-* (5 points) Submitting proposal on Time
+* (5 points) Submitting proposal on time
 
 ###Users (25 points)
-* (5 points) Users have a username, name, and password
-* (5 points) Usernames are unique and passwords are salted and hashed
+* (5 points) Users have a name, email, and password
+* (5 points) Passwords are salted and hashed
 * (5 points) Admin accounts exist
 * (5 points) Admins can promote users to admins
 * (5 points) Admins can demote other admins
@@ -29,7 +29,7 @@ We plan to use Reactjs for the Framework as well as Firebase for our database.
 * (5 points) Match scores are verfied (best of 3 sets, first to 21 points, win by two)
 
 ###User Settings (5 points)
-* (4 points) User settings shows user info (email, name, username, ranking)
+* (4 points) User settings shows user info (email, name, ranking)
 * (1 points) Users can update email information
 
 ###Usability (5 points)
