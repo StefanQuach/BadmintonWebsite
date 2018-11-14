@@ -2,7 +2,7 @@
 This will be a website for tracking the rankings of players in the Badminton Club as well as
 some administrative tasks like sending group posts and notifications. Rankings will be established by
 challenge matches, which users can request. If User 1 wins a challenge match against User 2, their
-rankings will swap. Administrators will be able to monitor activity on the website, as well as post
+rankings will change accordingly. Administrators will be able to monitor activity on the website, as well as post
 on an announcement board.  
 We plan to use Reactjs for the Framework as well as Firebase for our database.
 ##Grading Rubric
