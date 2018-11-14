@@ -1,3 +1,5 @@
+Checked out by TA: Harrison Lu
+
 #Badminton Club Ranking Website
 This will be a website for tracking the rankings of players in the Badminton Club as well as
 some administrative tasks like sending group posts and notifications. Rankings will be established by
