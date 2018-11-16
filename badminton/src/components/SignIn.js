@@ -68,13 +68,13 @@ class SignInForm extends Component {
           onChange={event => this.setState(byPropKey('email', event.target.value))}
           type="text"
           placeholder="Email Address"
-        />
+        /><br/>
         <input
           value={password}
           onChange={event => this.setState(byPropKey('password', event.target.value))}
           type="password"
           placeholder="Password"
-        />
+        /><br/>
         <button disabled={isInvalid} type="submit">
           Sign In
         </button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import SignOutButton from './SignOut';
 import SignInPage from './SignIn';
@@ -29,33 +29,32 @@ const Navigation = ({ authUser }) =>
           </NavItem>
         </Nav>
         <Nav pullRight>
-          <NavDropdown eventKey={1} title="Guest" id="basic-nav-dropdown">
+
             {authUser
               ? <NavigationAuth />
               : <NavigationNonAuth />
             }
-          </NavDropdown>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
 
 
 const NavigationAuth = () =>
-  <div>
+  <NavDropdown eventKey={1} title="boi" id="basic-nav-dropdown">
     <MenuItem eventKey={1.1}>Action</MenuItem>
     <MenuItem eventKey={1.2}>Another action</MenuItem>
     <MenuItem eventKey={1.3}>Something else here</MenuItem>
     <MenuItem divider />
     <MenuItem eventKey={1.4}><SignOutButton /></MenuItem>
-  </div>
+  </NavDropdown>
 
 const NavigationNonAuth = () =>
-  <div>
+  <NavDropdown eventKey={1} title="Guest" id="basic-nav-dropdown">
     <MenuItem eventKey={1.1}>
       <SignInPage />
     </MenuItem>
     <MenuItem divider />
-    <MenuItem eventKey={1.2}><NavLink to={routes.SIGN_UP}>Register</NavLink></MenuItem>
-  </div>
+    <MenuItem eventKey={1.2} componentClass={Link} href="/signup" to="/signup">Register</MenuItem>
+  </NavDropdown>
 
 export default Navigation;
