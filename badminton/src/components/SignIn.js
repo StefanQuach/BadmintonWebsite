@@ -9,6 +9,7 @@ const SignInPage = ({ history }) =>
   <div>
     <h1>Sign In</h1>
     <SignInForm history={history} />
+    <SignUpLink />
   </div>
 
 const byPropKey = (propertyName, value) => () => ({
@@ -40,6 +41,7 @@ class SignInForm extends Component {
 
     auth.doSignInWithEmailAndPassword(email, password)
       .then(() => {
+        console.log("logging in");
         this.setState({ ...INITIAL_STATE });
         history.push(routes.HOME);
       })
@@ -66,12 +68,14 @@ class SignInForm extends Component {
         <input
           value={email}
           onChange={event => this.setState(byPropKey('email', event.target.value))}
+          onSelect={this.props.onSelect}
           type="text"
           placeholder="Email Address"
         /><br/>
         <input
           value={password}
           onChange={event => this.setState(byPropKey('password', event.target.value))}
+          onSelect={this.props.onSelect}
           type="password"
           placeholder="Password"
         /><br/>

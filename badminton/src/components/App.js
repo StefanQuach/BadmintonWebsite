@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Route,
 } from 'react-router-dom';
-import { firebase } from '../firebase';
+import withAuthentication from './withAuthentication';
 
 import Navigation from './Navigation';
 import LandingPage from './Landing';
@@ -12,31 +12,16 @@ import SignUpPage from './SignUp';
 import SignInPage from './SignIn';
 import HomePage from './Home';
 import AccountPage from './Account';
+import RankingPage from './Ranking';
 
 import * as routes from '../constants/routes';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      authUser: null,
-    };
-  }
-
-  componentDidMount() {
-    firebase.auth.onAuthStateChanged(authUser => {
-      authUser
-        ? this.setState({ authUser })
-        : this.setState({ authUser: null });
-    });
-  }
-
   render() {
     return(
       <Router>
         <div>
-          <Navigation authUser={this.state.authUser} />
+          <Navigation />
 
           <hr/>
 
@@ -60,6 +45,10 @@ class App extends Component {
             exact path={routes.ACCOUNT}
             component={AccountPage}
           />
+          <Route
+            exact path={routes.RANKING}
+            component={RankingPage}
+          />
         </div>
       </Router>
     );
@@ -67,4 +56,4 @@ class App extends Component {
 }
 
 // export default App;
-export default App;
+export default withAuthentication(App);

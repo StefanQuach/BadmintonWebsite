@@ -4,7 +4,7 @@ import {
   withRouter,
 } from 'react-router-dom';
 
-import { auth } from '../firebase';
+import { auth } from '../firebase/firebase';
 import * as routes from '../constants/routes';
 
 const SignUpPage = ({ history }) =>
@@ -28,7 +28,7 @@ const byPropKey = (propertyName, value) => () => ({
 class SignUpForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {INITIAL_STATE};
+    this.state = {...INITIAL_STATE};
   }
 
   onSubmit = (event) => {
@@ -42,9 +42,15 @@ class SignUpForm extends Component {
       history,
     } = this.props;
 
-    auth.doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => {
-        this.setState({ INITIAL_STATE });
+    auth.createUserWithEmailAndPassword(email, passwordOne)
+      .then((user) => {
+        user=auth.currentUser;
+        if(user){
+          user.updateProfile({
+            displayName: this.state.username,
+          })
+          this.setState({ INITIAL_STATE });
+        }
         history.push(routes.HOME);
       })
       .catch(error => {
