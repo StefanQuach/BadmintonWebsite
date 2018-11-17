@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { auth } from '../firebase';
 
 import AuthUserContext from './AuthUserContext';
-import { SignInForm } from './SignIn';
+import { SignInFormWithRouter } from './SignIn';
 import * as routes from '../constants/routes';
 
 var Navbar = require("react-bootstrap/lib/Navbar"),
@@ -81,7 +81,7 @@ class NavigationNonAuth extends Component {
         onToggle={this.onToggle}>
         <MenuItem eventKey={1.1}>
           <h5>Sign In</h5>
-          <SignInForm onSelect={this.inputWasClicked}/>
+          <SignInFormWithRouter onSelect={this.inputWasClicked}/>
         </MenuItem>
         <MenuItem divider />
         <MenuItem eventKey={1.2} componentClass={Link} href="/signup" to="/signup">Don't have an account? Register</MenuItem>
