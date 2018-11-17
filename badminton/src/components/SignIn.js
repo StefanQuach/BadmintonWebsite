@@ -5,6 +5,9 @@ import { SignUpLink } from './SignUp';
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
 
+var Form = require("react-bootstrap/lib/Form"),
+    Button = require("react-bootstrap/lib/Button");
+
 const SignInPage = ({ history }) =>
   <div>
     <h1>Sign In</h1>
@@ -64,7 +67,7 @@ class SignInForm extends Component {
       email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <Form onSubmit={this.onSubmit}>
         <input
           value={email}
           onChange={event => this.setState(byPropKey('email', event.target.value))}
@@ -79,12 +82,12 @@ class SignInForm extends Component {
           type="password"
           placeholder="Password"
         /><br/>
-        <button disabled={isInvalid} type="submit">
+        <Button disabled={isInvalid} type="submit" onClick={this.onSubmit}>
           Sign In
-        </button>
+        </Button>
 
         { error && <p>{error.message}</p> }
-      </form>
+      </Form>
     );
   }
 }
