@@ -3,6 +3,7 @@ import {
   Link,
   withRouter,
 } from 'react-router-dom';
+import * as helpers from '../helpers/helpers';
 
 import { auth } from '../firebase/firebase';
 import * as routes from '../constants/routes';
@@ -20,10 +21,6 @@ const INITIAL_STATE = {
   passwordTwo: '',
   error: null,
 };
-
-const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value,
-});
 
 class SignUpForm extends Component {
   constructor(props) {
@@ -48,13 +45,14 @@ class SignUpForm extends Component {
         if(user){
           user.updateProfile({
             displayName: this.state.username,
-          })
-          this.setState({ INITIAL_STATE });
+          }).then(() => {
+            this.setState({ INITIAL_STATE });
+            history.push(routes.HOME);
+          });
         }
-        history.push(routes.HOME);
       })
       .catch(error => {
-        this.setState(byPropKey('error', error));
+        this.setState(helpers.byPropKey('error', error));
       });
 
     event.preventDefault();
@@ -79,25 +77,25 @@ class SignUpForm extends Component {
       <form onSubmit={this.onSubmit}>
         <input
           value={username}
-          onChange={event => this.setState(byPropKey('username', event.target.value))}
+          onChange={event => this.setState(helpers.byPropKey('username', event.target.value))}
           type="text"
           placeholder="Full Name"
         />
         <input
           value={email}
-          onChange={event => this.setState(byPropKey('email', event.target.value))}
+          onChange={event => this.setState(helpers.byPropKey('email', event.target.value))}
           type="text"
           placeholder="Email Address"
         />
         <input
           value={passwordOne}
-          onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
+          onChange={event => this.setState(helpers.byPropKey('passwordOne', event.target.value))}
           type="password"
           placeholder="Password"
         />
         <input
           value={passwordTwo}
-          onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
+          onChange={event => this.setState(helpers.byPropKey('passwordTwo', event.target.value))}
           type="password"
           placeholder="Confirm Password"
         />

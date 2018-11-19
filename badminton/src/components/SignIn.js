@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import * as helpers from '../helpers/helpers';
 
 import { SignUpLink } from './SignUp';
 import { auth } from '../firebase';
@@ -15,9 +16,6 @@ const SignInPage = ({ history }) =>
     <SignUpLink />
   </div>
 
-const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value,
-});
 
 const INITIAL_STATE = {
   email: '',
@@ -49,7 +47,7 @@ class SignInForm extends Component {
         history.push(routes.HOME);
       })
       .catch(error => {
-        this.setState(byPropKey('error', error));
+        this.setState(helpers.byPropKey('error', error));
       });
 
     event.preventDefault();
@@ -70,14 +68,14 @@ class SignInForm extends Component {
       <Form onSubmit={this.onSubmit}>
         <input
           value={email}
-          onChange={event => this.setState(byPropKey('email', event.target.value))}
+          onChange={event => this.setState(helpers.byPropKey('email', event.target.value))}
           onSelect={this.props.onSelect}
           type="text"
           placeholder="Email Address"
         /><br/>
         <input
           value={password}
-          onChange={event => this.setState(byPropKey('password', event.target.value))}
+          onChange={event => this.setState(helpers.byPropKey('password', event.target.value))}
           onSelect={this.props.onSelect}
           type="password"
           placeholder="Password"

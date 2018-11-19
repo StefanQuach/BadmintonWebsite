@@ -40,8 +40,6 @@ const Navigation = () =>
       </Navbar.Collapse>
     </Navbar>
 
-
-
 const NavigationAuth = ({authUser}) =>
   <NavDropdown eventKey={1} title={authUser.displayName} id="basic-nav-dropdown">
     <MenuItem eventKey={1.1} componentClass={Link} href="/account" to="/account">User Info</MenuItem>
