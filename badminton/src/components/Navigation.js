@@ -79,7 +79,7 @@ class NavigationNonAuth extends Component {
         title="Guest"
         id="basic-nav-dropdown"
         onToggle={this.onToggle}>
-        <MenuItem eventKey={1.1}>
+        <MenuItem eventKey={1.1} onClick={this.inputWasClicked}>
           <h5>Sign In</h5>
           <SignInFormWithRouter onSelect={this.inputWasClicked}/>
         </MenuItem>
