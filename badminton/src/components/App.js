@@ -15,6 +15,7 @@ import SignInPage from './SignIn';
 import HomePage from './Home';
 import AccountPage from './Account';
 import RankingPage from './Ranking';
+import CreateAnnouncementPage from './CreateAnnouncement';
 
 import * as routes from '../constants/routes';
 
@@ -50,6 +51,10 @@ class App extends Component {
             <Route
               exact path={routes.RANKING}
               component={RankingPage}
+            />
+            <Route
+              exact path={routes.CREATE_ANNOUNCEMENT}
+              component={CreateAnnouncementPage}
             />
             <Redirect to='/' />
           </Switch>

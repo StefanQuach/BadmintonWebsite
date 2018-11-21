@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import withAuthorization from './withAuthorization';
+
 import { db } from '../firebase';
 import { db as database } from '../firebase/firebase';
 
@@ -54,4 +56,6 @@ const RankList = ({users}) =>{
   );
 }
 
-export default RankingPage;
+const authCondition = (authUser) => !!authUser;
+
+export default withAuthorization(authCondition)(RankingPage);
