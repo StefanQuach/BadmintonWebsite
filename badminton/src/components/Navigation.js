@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { auth } from '../firebase';
+import { firebase, auth, db } from '../firebase';
 
 import AuthUserContext from './AuthUserContext';
 import { SignInFormWithRouter } from './SignIn';
 import * as routes from '../constants/routes';
+import { byPropKey } from '../helpers/helpers';
 
 var Navbar = require("react-bootstrap/lib/Navbar"),
     Nav = require("react-bootstrap/lib/Nav"),
@@ -40,14 +41,38 @@ const Navigation = () =>
       </Navbar.Collapse>
     </Navbar>
 
-const NavigationAuth = ({authUser}) =>
-  <NavDropdown eventKey={1} title={authUser.displayName} id="basic-nav-dropdown">
-    <MenuItem eventKey={1.1} componentClass={Link} href="/account" to="/account">User Info</MenuItem>
-    <MenuItem eventKey={1.2}>Another action</MenuItem>
-    <MenuItem eventKey={1.3}>Something else here</MenuItem>
-    <MenuItem divider />
-    <MenuItem eventKey={1.4} onClick={auth.doSignOut}>Logout</MenuItem>
-  </NavDropdown>
+class NavigationAuth extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {adminFuncs: null};
+    this.setAdminState();
+  }
+
+  setAdminState(){
+    db.userIsAdmin(firebase.auth.currentUser.uid).then((value) => {
+      if(value){
+        this.setState(byPropKey('adminFuncs', [
+          <MenuItem divider key={2.0}/>,
+          <MenuItem key={2.1} eventKey={2.1} componentClass={Link} href={routes.CREATE_ANNOUNCEMENT} to={routes.CREATE_ANNOUNCEMENT}>
+            Create Announcement
+          </MenuItem>
+        ]));
+      }
+    });
+  }
+  render(){
+    return(
+      <NavDropdown eventKey={1} title={firebase.auth.currentUser.displayName} id="basic-nav-dropdown">
+        <MenuItem eventKey={1.1} componentClass={Link} href="/account" to="/account">User Info</MenuItem>
+        <MenuItem eventKey={1.2}>Another action</MenuItem>
+        <MenuItem eventKey={1.3}>Something else here</MenuItem>
+        {this.state.adminFuncs && this.state.adminFuncs.map((func) => func)}
+        <MenuItem divider />
+        <MenuItem eventKey={1.4} onClick={auth.doSignOut}>Logout</MenuItem>
+      </NavDropdown>
+    );
+  }
+}
 
 class NavigationNonAuth extends Component {
   constructor(props) {

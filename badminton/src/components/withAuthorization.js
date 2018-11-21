@@ -8,26 +8,38 @@ import loadingImg from '../imgs/loading.gif';
 
 const withAuthorization = (authCondition) => (Component) => {
   class WithAuthorization extends React.Component {
+    constructor(props){
+      super(props);
+      this.state = {access: false}
+    }
 
     componentDidMount(){
-      this.listener = firebase.auth.onAuthStateChanged(authUser => {
-        if(!authCondition(authUser)){
+      this.listener = firebase.auth.onAuthStateChanged(async authUser => {
+        if(! await authCondition(authUser)){
           this.props.history.push(routes.LANDING);
+        }else{
+          this.setState({access: true});
         }
       });
     }
 
+    componentWillUnmount(){
+      this.listener();
+    }
+
     render() {
+      var hasAccess = this.state.access;
+      var display = hasAccess ? <Component {...this.props}/> : <Loading/>
       return (
-        <AuthUserContext.Consumer>
-          {authUser => authUser ? <Component {...this.props} /> : <Loading/>}
-        </AuthUserContext.Consumer>
+        <div>
+          {display}
+        </div>
       );
     }
   }
 
   const Loading = () =>
-    <img src={loadingImg}/>
+    <img src={loadingImg} alt="Loading"/>
 
   return withRouter(WithAuthorization);
 }

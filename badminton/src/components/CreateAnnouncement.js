@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { firebase } from '../firebase'
 import { db as database } from '../firebase/firebase';
+import { db } from '../firebase';
 import { byPropKey } from '../helpers/helpers';
 import { withRouter } from 'react-router-dom';
 import withAuthorization from './withAuthorization';
@@ -31,7 +32,7 @@ class CreateAnnouncementPage extends Component{
 
     const tauthor = firebase.auth.currentUser.uid;
 
-    var ref = database.ref(`announcements`).push().set({
+    database.ref(`announcements`).push().set({
       'title': ttitle,
       'content': tcontent,
       'author': tauthor
@@ -78,20 +79,12 @@ class CreateAnnouncementPage extends Component{
   }
 }
 
-const authCondition = (authUser) => {
+const authCondition = async (authUser) => {
   if(! !!firebase.auth.currentUser){
     return false;
   }
   var uid = firebase.auth.currentUser.uid;
-  return new Promise(function(resolve, reject){
-    try{
-      database.ref(`users/${uid}/admin`).once('value', (snapshot) => {
-        resolve(snapshot.val());
-      });
-    }catch(e){
-      reject(Error(e));
-    }
-  })
+  return await db.userIsAdmin(uid);
 }
 
 export default withAuthorization(authCondition)(withRouter(CreateAnnouncementPage));
