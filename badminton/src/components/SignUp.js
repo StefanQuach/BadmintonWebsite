@@ -6,6 +6,7 @@ import {
 import * as helpers from '../helpers/helpers';
 
 import { auth } from '../firebase/firebase';
+import { db } from '../firebase';
 import * as routes from '../constants/routes';
 
 const SignUpPage = ({ history }) =>
@@ -41,13 +42,19 @@ class SignUpForm extends Component {
 
     auth.createUserWithEmailAndPassword(email, passwordOne)
       .then((user) => {
-        user=auth.currentUser;
+        //user=auth.currentUser;
         if(user){
-          user.updateProfile({
+          auth.currentUser.updateProfile({
             displayName: this.state.username,
           }).then(() => {
-            this.setState({ INITIAL_STATE });
-            history.push(routes.HOME);
+            db.doCreateUser(user.user.uid, username, email, false)
+              .then(() => {
+                this.setState({ INITIAL_STATE });
+                history.push(routes.HOME);
+              })
+              .catch(error => {
+                this.setState({error});
+              });
           });
         }
       })

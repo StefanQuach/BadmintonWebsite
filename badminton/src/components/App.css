@@ -30,3 +30,23 @@
     transform: rotate(360deg);
   }
 }
+
+.rank-element{
+  display:flex;
+  justify-content: flex-start;
+  background-color: #a3a3a3;
+  margin: 5px;
+}
+
+.rank-rank{
+  padding: 10px;
+  font-size: 2em;
+  border: solid black 1px;
+}
+
+.rank-username{
+  padding: 10px;
+  font-size: 2em;
+  border: solid black 1px;
+  flex-grow:1;
+}
