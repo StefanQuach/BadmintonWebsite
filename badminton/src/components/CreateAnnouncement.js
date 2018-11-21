@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import { firebase } from '../firebase'
 import { db as database } from '../firebase/firebase';
 import { byPropKey } from '../helpers/helpers';
+import { withRouter } from 'react-router-dom';
+import withAuthorization from './withAuthorization';
+import * as routes from '../constants/routes';
 
 const INITIAL_STATE = {
   title: '',
@@ -18,14 +21,23 @@ class CreateAnnouncementPage extends Component{
 
   onSubmit(event) {
     event.preventDefault();
-    const{
-      title,
-      content,
-    } = this.state;
 
-    console.log(title);
-    console.log(content);
-    console.log(firebase.auth.currentUser.uid);
+    const{
+      history,
+    } = this.props;
+
+    const ttitle = this.state.title;
+    const tcontent = this.state.content;
+
+    const tauthor = firebase.auth.currentUser.uid;
+
+    var ref = database.ref(`announcements`).push().set({
+      'title': ttitle,
+      'content': tcontent,
+      'author': tauthor
+    });
+
+    history.push(routes.HOME);
   }
 
   render(){
@@ -66,4 +78,20 @@ class CreateAnnouncementPage extends Component{
   }
 }
 
-export default CreateAnnouncementPage;
+const authCondition = (authUser) => {
+  if(! !!firebase.auth.currentUser){
+    return false;
+  }
+  var uid = firebase.auth.currentUser.uid;
+  return new Promise(function(resolve, reject){
+    try{
+      database.ref(`users/${uid}/admin`).once('value', (snapshot) => {
+        resolve(snapshot.val());
+      });
+    }catch(e){
+      reject(Error(e));
+    }
+  })
+}
+
+export default withAuthorization(authCondition)(withRouter(CreateAnnouncementPage));
