@@ -1,8 +1,11 @@
 import React from 'react';
+import withAuthorization from './withAuthorization';
 
 const RankingPage = () =>
   <div>
     <h1>Rankings</h1>
   </div>
 
-export default RankingPage;
+const authCondition = (authUser) => !!authUser;
+
+export default withAuthorization(authCondition)(RankingPage);
