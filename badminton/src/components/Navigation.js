@@ -63,8 +63,8 @@ class NavigationAuth extends React.Component{
   render(){
     return(
       <NavDropdown eventKey={1} title={firebase.auth.currentUser.displayName} id="basic-nav-dropdown">
-        <MenuItem eventKey={1.1} componentClass={Link} href="/account" to="/account">User Info</MenuItem>
-        <MenuItem eventKey={1.2}>Another action</MenuItem>
+        <MenuItem eventKey={1.1} componentClass={Link} href={routes.ACCOUNT} to={routes.ACCOUNT}>My Account</MenuItem>
+        <MenuItem eventKey={1.2} componentClass={Link} href={routes.HOME} to={routes.HOME}>Home</MenuItem>
         <MenuItem eventKey={1.3}>Something else here</MenuItem>
         {this.state.adminFuncs && this.state.adminFuncs.map((func) => func)}
         <MenuItem divider />
