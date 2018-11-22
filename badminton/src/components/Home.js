@@ -14,7 +14,10 @@ class HomePage extends Component{
 
   componentDidMount(){
     var component = this;
-    this.listener = database.ref(`announcements`).orderByChild('timestamp').on('value', (snapshot) => {
+    this.listener = database.ref(`announcements`)
+      .orderByChild('timestamp')
+      .limitToLast(100)
+      .on('value', (snapshot) => {
       var announcements = [];
       snapshot.forEach(function(childSnap){
         var announcement = childSnap.val()
