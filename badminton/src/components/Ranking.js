@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 
 import withAuthorization from './withAuthorization';
+import Alert from './Alert';
 
 import { db } from '../firebase';
 import { db as database } from '../firebase/firebase';
+import { firebase } from '../firebase';
+import { byPropKey } from '../helpers/helpers';
 
 const RankingPage = () =>
   <div>
@@ -25,7 +28,7 @@ class Ranks extends Component {
         user_obj.key = childSnap.key;
         newUsers.push(user_obj);
       });
-      this.setState({users: newUsers});
+      this.setState(byPropKey('users', newUsers));
     });
   }
 
@@ -38,22 +41,51 @@ class Ranks extends Component {
   }
 }
 
-const RankList = ({users}) =>{
-  const userList = users.map((user) =>
-    <div className="rank-element" key={user.key}>
-      <div className="rank-rank">
-        {user.rank}
+class RankList extends Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      users: this.props.users,
+      alert: null,
+    };
+  }
+
+  requestChallenge(key, username){
+    database.ref(`pending-challenge-requests`).push({
+      'challenger': firebase.auth.currentUser.uid,
+      'opponent': key,
+    });
+    this.setState(byPropKey('alert', <Alert
+      text={'Your request was received and is being processed.'}
+      color={'#00ff00'}
+      />
+    ));
+    setTimeout(() => {this.setState(byPropKey('alert', null))}, 5000);
+  }
+
+  render(){
+    const userList = this.state.users.map((user) =>
+      <div className="rank-element" key={user.key}>
+        <div className="rank-rank">
+          {user.rank}
+        </div>
+        <div className="rank-user-controls">
+          <div className="rank-username">
+            {user.username}
+          </div>
+          <div>
+            <button onClick={() => this.requestChallenge(user.key, user.username)}>Request Challenge</button>
+          </div>
+        </div>
       </div>
-      <div className="rank-username">
-        {user.username}
+    );
+    return(
+      <div>
+        {this.state.alert}
+        {userList}
       </div>
-    </div>
-  );
-  return(
-    <div>
-      {userList}
-    </div>
-  );
+    );
+  }
 }
 
 const authCondition = (authUser) => !!authUser;
