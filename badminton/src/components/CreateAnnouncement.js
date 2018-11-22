@@ -35,7 +35,8 @@ class CreateAnnouncementPage extends Component{
     database.ref(`announcements`).push().set({
       'title': ttitle,
       'content': tcontent,
-      'author': tauthor
+      'author': tauthor,
+      'timestamp': Date.now(),
     });
 
     history.push(routes.HOME);
