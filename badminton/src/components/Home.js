@@ -32,10 +32,6 @@ class HomePage extends Component{
     });
   }
 
-  componentWillUnmount(){
-    this.listener();
-  }
-
   render(){
     const announcements = this.state.announcements;
     var announcementElems = <h3>No Announcements!</h3>;
