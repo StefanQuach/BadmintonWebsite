@@ -7,6 +7,7 @@ import { db } from '../firebase';
 import { db as database } from '../firebase/firebase';
 import { firebase } from '../firebase';
 import { byPropKey } from '../helpers/helpers';
+import * as config from '../constants/config';
 
 const RankingPage = () =>
   <div>
@@ -48,29 +49,50 @@ class RankList extends Component{
     this.state = {
       users: this.props.users,
       alert: null,
+      currentUser: null,
     };
     this.requestChallenge = this.requestChallenge.bind(this);
   }
 
-  requestChallenge(key, username){
-    if(firebase.auth.currentUser.uid !== key){
-      database.ref(`pending-challenge-requests`).push({
-        'challenger': firebase.auth.currentUser.uid,
-        'opponent': key,
+  requestChallenge(key, username, rank){
+    var currentUser = firebase.auth.currentUser.uid;
+    if(currentUser !== key){
+      var requestRef = database.ref(`pending-challenge-requests`);
+      requestRef.once('value', (requestSnap) => {
+        var requests = requestSnap.val();
+        for(var rKey in requests){
+          if(requests[rKey].challenger === currentUser && requests[rKey].opponent === key){
+            this.setState(byPropKey('alert', <Alert
+              text={'You already made this request.'}
+              color={'#ff0000'}
+            />));
+            return;
+          }
+        }
+        if(this.state.currentUser.rank < rank || this.state.currentUser.rank - rank > config.RANK_DIST){
+          this.setState(byPropKey('alert', <Alert
+            text={'You can only challenge players ranked up to four places better than you.'}
+            color={'#ff0000'}
+          />));
+          return;
+        }
+        requestRef.push({
+          'challenger': firebase.auth.currentUser.uid,
+          'opponent': key,
+        });
+        this.setState(byPropKey('alert', <Alert
+          text={'Your request was received and is being processed.'}
+          color={'#00ff00'}
+          />
+        ));
       });
-      this.setState(byPropKey('alert', <Alert
-        text={'Your request was received and is being processed.'}
-        color={'#00ff00'}
-        />
-      ));
-      setTimeout(() => {this.setState(byPropKey('alert', null))}, 4000);
     }else{
       this.setState(byPropKey('alert', <Alert
         text={'You cannot challenge yourself.'}
         color={'#ff0000'}
       />));
-      setTimeout(() => {this.setState(byPropKey('alert', null))}, 3000);
     }
+    setTimeout(() => {this.setState(byPropKey('alert', null))}, 4000);
   }
 
   componentDidMount(){
@@ -78,12 +100,14 @@ class RankList extends Component{
       var snapUser = snapshot.val();
       var rank = snapUser.rank;
       var id = snapshot.key;
+      snapUser.key = id;
       var users = this.state.users;
+      this.setState(byPropKey('currentUser', snapUser));
       database.ref(`pending-challenge-requests`).on('value', (requestSnap) => {
         var requests = requestSnap.val();
         for(var i = 0; i<users.length; i++){
           var rankDiff = rank - users[i].rank;
-          if(rankDiff > 0 && rankDiff <= 4){
+          if(rankDiff > 0 && rankDiff <= config.RANK_DIST){
             users[i].challengeButton = true;
           }
           for(var key in requests){
@@ -122,7 +146,7 @@ class RankList extends Component{
 
 const ChallengeButton = ({ user, onClick }) =>
   <div>
-    <button onClick={() => onClick(user.key, user.username)}>Request Challenge</button>
+    <button onClick={() => onClick(user.key, user.username, user.rank)}>Request Challenge</button>
   </div>
 
 const authCondition = (authUser) => !!authUser;
