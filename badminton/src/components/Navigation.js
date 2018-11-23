@@ -53,8 +53,21 @@ class NavigationAuth extends React.Component{
       if(value){
         this.setState(byPropKey('adminFuncs', [
           <MenuItem divider key={2.0}/>,
-          <MenuItem key={2.1} eventKey={2.1} componentClass={Link} href={routes.CREATE_ANNOUNCEMENT} to={routes.CREATE_ANNOUNCEMENT}>
+          <MenuItem
+            key={2.1}
+            eventKey={2.1}
+            componentClass={Link}
+            href={routes.CREATE_ANNOUNCEMENT}
+            to={routes.CREATE_ANNOUNCEMENT}>
             Create Announcement
+          </MenuItem>,
+          <MenuItem
+            key={2.2}
+            eventKey={2.2}
+            componentClass={Link}
+            href={routes.CHALLENGE_REQUESTS}
+            to={routes.CHALLENGE_REQUESTS}>
+            Challenge Requests
           </MenuItem>
         ]));
       }

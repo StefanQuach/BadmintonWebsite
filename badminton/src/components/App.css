@@ -50,3 +50,54 @@
   border: solid black 1px;
   flex-grow:1;
 }
+
+.challenge-request{
+  border: solid black 1px;
+  margin: 5px;
+}
+
+.cr-info, .cr-control{
+  display: flex;
+  justify-content: space-between;
+}
+
+.cr-info{
+  background-color: #a3a3a3;
+}
+
+.cr-participant, .cr-text{
+  padding: 10px;
+  width: 33%;
+  font-size: 2em;
+  font-weight: bold;
+  display: flex;
+}
+
+.cr-text{
+  justify-content: center;
+}
+
+.cr-challenger{
+  justify-content: flex-start;
+}
+
+.cr-opponent{
+  justify-content: flex-end;
+}
+
+.cr-control{
+  background-color: #00d9ff;
+}
+
+.cr-button{
+  margin: 10px;
+  font-size: 2em;
+}
+
+.cr-resolve{
+  background-color: #4ff97a;
+}
+
+.cr-dismiss{
+  background-color: #ff5e5e;
+}
