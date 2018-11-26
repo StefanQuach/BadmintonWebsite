@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { firebase } from '../firebase'
 import { db as database } from '../firebase/firebase';
 import { db } from '../firebase';
-import { byPropKey } from '../helpers/helpers';
+import { byPropKey, convertUnixTime } from '../helpers/helpers';
 import { withRouter } from 'react-router-dom';
 import withAuthorization from './withAuthorization';
 import * as routes from '../constants/routes';
@@ -29,6 +29,7 @@ class CreateAnnouncementPage extends Component{
 
     const ttitle = this.state.title;
     const tcontent = this.state.content;
+    const tpublic = Boolean(this.state.public);
 
     const tauthor = firebase.auth.currentUser.uid;
 
@@ -37,6 +38,7 @@ class CreateAnnouncementPage extends Component{
       'content': tcontent,
       'author': tauthor,
       'timestamp': Date.now(),
+      'public': tpublic,
     });
 
     history.push(routes.HOME);
@@ -66,8 +68,16 @@ class CreateAnnouncementPage extends Component{
           <div className="form-group">
             <textarea
               id="announcement-content"
+              class="announcement-textarea"
               onChange={event => this.setState(byPropKey('content', event.target.value))}
               value={content}></textarea>
+          </div>
+          <div className="form-grou">
+            <input
+              id="announcement-public"
+              value={false}
+              onClick={event => this.setState(byPropKey('public', event.target.value))}
+              type="checkbox"/> Check this to make the announcement public
           </div>
           <div className="form-group">
             <button disabled={isInvalid} type="submit">
@@ -88,4 +98,22 @@ const authCondition = async (authUser) => {
   return await db.userIsAdmin(uid);
 }
 
+const Announcements = ({ announcements }) =>{
+  var announcementElems = announcements.map((ann) =>
+    <div className="announcement" key={ann.key}>
+      <h3>{ann.title}</h3>
+      <div class="announcement-caption">By: {ann.author}</div>
+      <div class="announcement-caption">Written at: {convertUnixTime(ann.timestamp)}</div>
+      <div class="announcement-content">{ann.content}</div>
+      <hr/>
+    </div>
+  );
+  return(
+    <div>{announcementElems}</div>
+  );
+}
+
 export default withAuthorization(authCondition)(withRouter(CreateAnnouncementPage));
+export {
+  Announcements,
+}

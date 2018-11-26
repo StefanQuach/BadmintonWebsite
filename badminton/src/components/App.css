@@ -50,3 +50,17 @@
   border: solid black 1px;
   flex-grow:1;
 }
+
+.announcement-caption {
+  font-size: 10pt;
+  color: #808080;
+}
+
+.announcement-content {
+  font-size: 14pt;
+}
+
+.announcement-textarea {
+  width: 80vw;
+  height: 30vh;
+}
