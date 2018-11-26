@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import { firebase, db } from '../firebase'
 import { db as database } from '../firebase/firebase';
-import { db } from '../firebase';
 import { byPropKey, adminCheck, convertUnixTime } from '../helpers/helpers';
 import { withRouter } from 'react-router-dom';
 import withAuthorization from './withAuthorization';
