@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import withAuthorization from './withAuthorization';
 import { db as database } from '../firebase/firebase';
 import { byPropKey } from '../helpers/helpers';
 
