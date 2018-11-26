@@ -76,10 +76,14 @@ class Ranks extends Component{
     });
   }
 
-  demote(uid){
-    database.ref(`users/${uid}`).update({
-      admin:false
-    });
+  demote(uid, username){
+    const passphrase = 'demote';
+    var confirmation = prompt("You are about to demote " + username + " to a simplton instead of an almighty admin. Type '" + passphrase + "' if you're sure.");
+    if(confirmation === passphrase){
+      database.ref(`users/${uid}`).update({
+        admin:false
+      });
+    }
   }
 
   componentDidMount(){
@@ -91,6 +95,7 @@ class Ranks extends Component{
         user_obj.challengeButton = false;
         newUsers.push(user_obj);
       });
+      //console.log(newUsers);
       this.setState({users: newUsers}, () => {
         database.ref(`users/${firebase.auth.currentUser.uid}`).once('value', (snapshot) => {
           var snapUser = snapshot.val();
@@ -99,24 +104,20 @@ class Ranks extends Component{
           snapUser.key = id;
           var users = this.state.users;
           this.setState(byPropKey('currentUser', snapUser));
-          database.ref(`users`).orderByChild('rank').startAt(rank - config.RANK_DIST).endAt(rank - 1).on('value', (userSnap) => {
-            var rankRangeUsers = [];
-            userSnap.forEach(function(childSnap){
-              rankRangeUsers.push(childSnap.val());
-            });
-            database.ref(`pending-challenge-requests`).on('value', (requestSnap) => {
-              var requests = requestSnap.val();
-              for(var i = 0; i<rankRangeUsers.length; i++){
-                const userInd = rankRangeUsers[i].rank - 1;
-                users[userInd].challengeButton = true;
-                for(var key in requests){
-                  if(requests[key].challenger === id && requests[key].opponent === users[userInd].key){
-                    users[userInd].challengeButton = false;
-                  }
+          database.ref(`pending-challenge-requests`).on('value', (requestSnap) => {
+            var requests = requestSnap.val();
+            for(var i = 0; i<users.length; i++){
+              var rankDiff = rank - users[i].rank;
+              if(rankDiff > 0 && rankDiff <= config.RANK_DIST){
+                users[i].challengeButton = true;
+              }
+              for(var key in requests){
+                if(requests[key].challenger === id && requests[key].opponent === users[i].key){
+                  users[i].challengeButton = false;
                 }
               }
-              this.setState(byPropKey('users', users));
-            });
+            }
+            this.setState(byPropKey('users', users));
           });
         });
       });
@@ -127,7 +128,6 @@ class Ranks extends Component{
     const currUser = this.state.currentUser;
     var userList = null;
     if(!!currUser && !!this.state.users){
-      console.log(this.state.users)
       userList = this.state.users.map((user) =>
         <div className="rank-element" key={user.key}>
           <div className="rank-rank">
@@ -139,7 +139,7 @@ class Ranks extends Component{
             </div>
             {user.challengeButton && <ChallengeButton user={user} onClick={this.requestChallenge}/>}
             {!user.admin && currUser.admin && <AdminButton text={'Promote To Admin'} onClick={() => this.promote(user.key)}/>}
-            {user.admin  && currUser.admin && <AdminButton text={'Demote Admin'} onClick={() => this.demote(user.key)} />}
+            {user.admin  && currUser.admin && <AdminButton text={'Demote Admin'} onClick={() => this.demote(user.key, user.username)} />}
             {currUser.admin && <AdminButton text={'Kick'} onClick={() => this.deactivate(user.key)}/>}
           </div>
         </div>
