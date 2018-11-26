@@ -8,4 +8,5 @@ export const LANDING = '/';
 export const ACCOUNT = '/account';
 export const PASSWORD_FORGET = '/pw-forget';
 export const RANKING = '/ranking';
-export const CREATE_ANNOUNCEMENT = '/create-announcement'
+export const CREATE_ANNOUNCEMENT = '/create-announcement';
+export const CHALLENGE_REQUESTS = '/challenge-requests';

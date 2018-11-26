@@ -16,6 +16,7 @@ import HomePage from './Home';
 import AccountPage from './Account';
 import RankingPage from './Ranking';
 import CreateAnnouncementPage from './CreateAnnouncement';
+import ChallengeRequestPage from './ChallengeRequests';
 
 import * as routes from '../constants/routes';
 
@@ -55,6 +56,10 @@ class App extends Component {
             <Route
               exact path={routes.CREATE_ANNOUNCEMENT}
               component={CreateAnnouncementPage}
+            />
+            <Route
+              exact path={routes.CHALLENGE_REQUESTS}
+              component={ChallengeRequestPage}
             />
             <Redirect to='/' />
           </Switch>

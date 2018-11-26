@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 
-import { firebase } from '../firebase'
+import { firebase, db } from '../firebase'
 import { db as database } from '../firebase/firebase';
-import { db } from '../firebase';
-import { byPropKey } from '../helpers/helpers';
+import { byPropKey, adminCheck } from '../helpers/helpers';
 import { withRouter } from 'react-router-dom';
 import withAuthorization from './withAuthorization';
 import * as routes from '../constants/routes';
@@ -80,12 +79,6 @@ class CreateAnnouncementPage extends Component{
   }
 }
 
-const authCondition = async (authUser) => {
-  if(! !!firebase.auth.currentUser){
-    return false;
-  }
-  var uid = firebase.auth.currentUser.uid;
-  return await db.userIsAdmin(uid);
-}
+const authCondition = adminCheck;
 
 export default withAuthorization(authCondition)(withRouter(CreateAnnouncementPage));
