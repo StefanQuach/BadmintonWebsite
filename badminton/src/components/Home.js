@@ -4,6 +4,8 @@ import withAuthorization from './withAuthorization';
 import { db as database } from '../firebase/firebase';
 import { byPropKey } from '../helpers/helpers';
 
+import { Announcements } from './CreateAnnouncement';
+
 class HomePage extends Component{
   constructor(props){
     super(props);
@@ -50,20 +52,6 @@ class HomePage extends Component{
       </div>
     );
   }
-}
-
-const Announcements = ({ announcements }) =>{
-  var announcementElems = announcements.map((ann) =>
-    <div className="announcement" key={ann.key}>
-      <div>Author: {ann.author}</div>
-      <div>Title: {ann.title}</div>
-      <div>Content: {ann.content}</div>
-      <div>Timestamp: {ann.timestamp}</div>
-    </div>
-  );
-  return(
-    <div>{announcementElems}</div>
-  );
 }
 
 const authCondition = (authUser) =>

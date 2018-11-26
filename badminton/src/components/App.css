@@ -101,3 +101,16 @@
 .cr-dismiss{
   background-color: #ff5e5e;
 }
+.announcement-caption {
+  font-size: 10pt;
+  color: #808080;
+}
+
+.announcement-content {
+  font-size: 14pt;
+}
+
+.announcement-textarea {
+  width: 80vw;
+  height: 30vh;
+}
