@@ -114,3 +114,60 @@
   width: 80vw;
   height: 30vh;
 }
+
+div#home-page-body{
+  display:flex;
+  justify-content: space-around;
+}
+
+div.cr-match{
+  display:flex;
+  justify-content: space-between;
+  border: solid black 1px;
+  border-radius: 10px;
+}
+
+div.cr-game-group{
+  margin: 5px;
+  border: dotted gray 3px;
+  border-radius: 10px;
+}
+
+div.cr-game-title{
+  display: flex;
+  justify-content: center;
+}
+
+div.cr-game-section{
+  display: flex;
+  justify-content: space-between;
+}
+
+div.cr-game{
+  margin: 10px;
+}
+
+.cr-game-score-input-container-challenger, .cr-game-score-label-container-challenger{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.cr-game-score-input-container-opponent, .cr-game-score-label-container-opponent{
+  display: flex;
+  justify-content: flex-end;
+}
+
+input.home-game-input{
+  width: 40px;
+}
+
+div.home-cr-match-submit{
+  margin: 10px;
+  margin-right: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+div.home-cr-match-submit .home-cr-match-submit-button{
+  background-color: #33ff33;
+}
