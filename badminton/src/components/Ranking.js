@@ -148,7 +148,7 @@ class Ranks extends Component{
             {user.challengeButton && <ChallengeButton user={user} onClick={this.requestChallenge}/>}
             {!user.admin && currUser.admin && <AdminButton text={'Promote To Admin'} onClick={() => this.promote(user.key)}/>}
             {user.admin  && currUser.admin && <AdminButton text={'Demote Admin'} onClick={() => this.demote(user.key, user.username)} />}
-            {currUser.admin && <AdminButton text={'Kick'} onClick={() => this.deactivate(user.key, user.username)}/>}
+            {currUser.admin && <AdminButton text={'Deactivate'} onClick={() => this.deactivate(user.key, user.username)}/>}
           </div>
         </div>
       );
