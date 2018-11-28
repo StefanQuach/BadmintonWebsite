@@ -95,9 +95,9 @@ const Announcements = ({ announcements }) =>{
   var announcementElems = announcements.map((ann) =>
     <div className="announcement" key={ann.key}>
       <h3>{ann.title}</h3>
-      <div class="announcement-caption">By: {ann.author}</div>
-      <div class="announcement-caption">Written at: {convertUnixTime(ann.timestamp)}</div>
-      <div class="announcement-content">{ann.content}</div>
+      <div className="announcement-caption">By: {ann.author}</div>
+      <div className="announcement-caption">Written at: {convertUnixTime(ann.timestamp)}</div>
+      <div className="announcement-content">{ann.content}</div>
       <hr/>
     </div>
   );
