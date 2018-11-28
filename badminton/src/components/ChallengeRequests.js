@@ -31,6 +31,7 @@ class ChallengeRequestPage extends Component{
           key={key}
           cKey={requests[key].challenger}
           oKey={requests[key].opponent}
+          requestKey={key}
         />);
       }
     }
@@ -46,7 +47,7 @@ class ChallengeRequestPage extends Component{
 class ChallengeRequest extends Component{
   constructor(props){
     super(props);
-    this.state = {...this.props};
+    this.state = {...props};
     this.state.challenger = null;
     this.state.opponent = null;
   }
@@ -60,6 +61,14 @@ class ChallengeRequest extends Component{
     database.ref(`users/${uid}`).once('value', (snapshot) => {
       this.setState(byPropKey(stateKey, snapshot.val()));
     });
+  }
+
+  dismiss(){
+    const passphrase = 'dismiss'
+    const confirm = prompt('You are about to dismiss this challenge request. Type "' + passphrase + '" if you\'re sure');
+    if(confirm === passphrase){
+      database.ref(`pending-challenge-requests/${this.state.requestKey}`).remove();
+    }
   }
 
   render(){
@@ -81,7 +90,7 @@ class ChallengeRequest extends Component{
             <button className="cr-resolve cr-button">Resolve</button>
           </div>
           <div className="cr-ctrl-action">
-            <button className="cr-dismiss cr-button">Dismiss</button>
+            <button className="cr-dismiss cr-button" onClick={() => {this.dismiss()}}>Dismiss</button>
           </div>
         </div>
       </div>
@@ -137,9 +146,8 @@ class HomeChallengeRequest extends Component{
 
   onSubmit(evt){
     evt.preventDefault();
-    console.log(this.checkScores());
     if(this.checkScores()){
-      database.ref(`pending-challenge-requests/${this.key}/${this.key}-report`).set({
+      database.ref(`pending-challenge-requests/${this.key}/${this.type}-report`).set({
         gameScores: this.state.gameScores,
       });
       this.setState({alert: <Alert text={'Nice submission'} color='#00ff00'/>});
