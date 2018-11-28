@@ -4,6 +4,7 @@ import withAuthorization from './withAuthorization';
 import { firebase, db } from '../firebase';
 import { db as database } from '../firebase/firebase';
 import { adminCheck, byPropKey } from '../helpers/helpers';
+import Alert from './Alert';
 
 var Button = require("react-bootstrap/lib/Button");
 
@@ -88,24 +89,35 @@ class ChallengeRequest extends Component{
   }
 }
 
-const HomeChallengeRequestList = ({ userChallengeRequestList }) =>
+const HomeChallengeRequestList = ({ userChallengeRequestList, type }) =>
   <div>
     {userChallengeRequestList.map((ucr) =>
-      <HomeChallengeRequest userChallengeRequest={ucr} key={ucr.key}/>
+      <HomeChallengeRequest userChallengeRequest={ucr} key={ucr.key} type={type}/>
     )}
   </div>
 
 class HomeChallengeRequest extends Component{
   constructor(props){
     super(props);
+    this.type = props.type;
     this.key = props.userChallengeRequest.key;
     this.state = {
       // Ordered list of game scores, game 1: challenger, opponent; game2: ...
       gameScores: ['', '', '', '', '', ''],
+      alert: null,
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+  }
+
+  componentDidMount(){
+    database.ref(`pending-challenge-requests/${this.key}/${this.type}-report/gameScores`).on('value', (snapshot) => {
+      const gameScores = snapshot.val();
+      if(!!gameScores){
+        this.setState({gameScores: gameScores});
+      }
+    });
   }
 
   handleChange(evt, ind){
@@ -126,8 +138,16 @@ class HomeChallengeRequest extends Component{
   onSubmit(evt){
     evt.preventDefault();
     console.log(this.checkScores());
-    console.log(this.challengerWins());
-    console.log(this.opponentWins());
+    if(this.checkScores()){
+      database.ref(`pending-challenge-requests/${this.key}/${this.key}-report`).set({
+        gameScores: this.state.gameScores,
+      });
+      this.setState({alert: <Alert text={'Nice submission'} color='#00ff00'/>});
+      setTimeout(() => {this.setState({alert: null})}, 2000);
+    }else{
+      this.setState({alert: <Alert text={'That match is invalid'} color={'#ff0000'}/>});
+      setTimeout(() => {this.setState({alert: null})}, 2000);
+    }
   }
 
   /**
@@ -144,11 +164,11 @@ class HomeChallengeRequest extends Component{
 
       this.checkGame(scores[0], scores[1])
       && this.checkGame(scores[2], scores[3])
-      && scores[4] === '' && scores[5] === '')
+      && scores[4] === "" && scores[5] === "")
 
       &&
 
-      (this.challengerWins() >= 2 || this.opponentWins() >= 2)
+      (this.challengerWins() === 2 || this.opponentWins() === 2)
     );
   }
 
@@ -163,7 +183,7 @@ class HomeChallengeRequest extends Component{
     if(isNaN(parseInt(score1)) || isNaN(parseInt(score2))){
       return false;
     }
-    if(score1 >= 21 && score2 >= 21){
+    if(score1 > 21 || score2 > 21){
       return(Math.abs(score1-score2) === 2);
     }else if(score1 === 21){
       return(score1 - score2 >= 2);
@@ -197,25 +217,30 @@ class HomeChallengeRequest extends Component{
       userChallengeRequest,
     } = this.props;
     var gameInputs = <div className="cr-match">
-      <ChallengeRequestGame scores={scores} onChange={this.handleChange} gameNum={1} />
-      <ChallengeRequestGame scores={scores} onChange={this.handleChange} gameNum={2} />
-      <ChallengeRequestGame scores={scores} onChange={this.handleChange} gameNum={3} />
+      <ChallengeRequestGame scores={scores} onChange={this.handleChange} gameNum={1} type={this.type}/>
+      <ChallengeRequestGame scores={scores} onChange={this.handleChange} gameNum={2} type={this.type}/>
+      <ChallengeRequestGame scores={scores} onChange={this.handleChange} gameNum={3} type={this.type}/>
     </div>;
     return(
       <div key={this.key} className="home-challenge-request">
-        <h3>You challenged: {userChallengeRequest.username}</h3>
+        {
+          this.type === 'challenger'
+          ? <h3>You challenged: {userChallengeRequest.username}</h3>
+          : <h3>{userChallengeRequest.username} challenged you</h3>
+        }
         <form>
           {gameInputs}
           <div className="home-cr-match-submit">
             <Button className="home-cr-match-submit-button" type="submit" onClick={this.onSubmit}>Submit Scores</Button>
           </div>
         </form>
+        {this.state.alert}
       </div>
     );
   }
 }
 
-const ChallengeRequestGame = ({ scores, onChange, gameNum }) =>{
+const ChallengeRequestGame = ({ scores, onChange, gameNum, type }) =>{
   const base = (gameNum-1) * 2;
   const next = base + 1;
   return(
@@ -223,7 +248,11 @@ const ChallengeRequestGame = ({ scores, onChange, gameNum }) =>{
       <div className="cr-game-title"><h4>Game {gameNum}</h4></div>
       <div className="cr-game-section">
         <div className="cr-game">
-          <div className="cr-game-score-label-container-challenger"><label className="cr-game-score-label" htmlFor={"cr-game-score-input" + base}>Challenger:</label></div>
+          <div className="cr-game-score-label-container-challenger">
+            <label className="cr-game-score-label" htmlFor={"cr-game-score-input" + base}>
+              {type === 'challenger' ? 'You:' : 'Challenger:'}
+            </label>
+          </div>
           <div className="cr-game-score-input-container-challenger"><input
             id={"cr-game-score-input" + base}
             className="home-game-input"
@@ -232,7 +261,11 @@ const ChallengeRequestGame = ({ scores, onChange, gameNum }) =>{
           /></div>
         </div>
         <div className="cr-game">
-          <div className="cr-game-score-label-container-opponent"><label className="cr-game-score-label" htmlFor={"cr-game-score-input" + next}>Opponent:</label></div>
+          <div className="cr-game-score-label-container-opponent">
+            <label className="cr-game-score-label" htmlFor={"cr-game-score-input" + next}>
+              {type === 'opponent' ? 'You:' : 'Opponent:'}
+            </label>
+          </div>
           <div className="cr-game-score-input-container-opponent"><input
             id={"cr-game-score-input" + next}
             className="home-game-input"

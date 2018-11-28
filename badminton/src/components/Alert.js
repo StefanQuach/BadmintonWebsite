@@ -11,6 +11,7 @@ const Alert = ({color, text}) => {
       justifyContent: 'center',
       padding: '10px',
       border: 'solid rgba(0, 0, 0, 0.4) 7px',
+      borderRadius: '10px',
     }
 
     const textStyle = {

@@ -13,7 +13,8 @@ class HomePage extends Component{
     super(props);
     this.state = {
       announcements: null,
-      challengeRequests: null,
+      challengerRequests: null,
+      opponentRequests: null,
     };
   }
 
@@ -35,25 +36,31 @@ class HomePage extends Component{
         });
       });
     });
+    this.getChallengeRequests('challenger', 'challengerRequests');
+    this.getChallengeRequests('opponent', 'opponentRequests');
+  }
+
+  getChallengeRequests(role, prop){
     database.ref(`pending-challenge-requests`)
-      .orderByChild('challenger')
+      .orderByChild(role)
       .equalTo(firebase.auth.currentUser.uid)
       .on('value', (snapshot) => {
       var challengeRequests = [];
       var crSnap = snapshot.val();
       const component = this;
+      var other = role === 'challenger' ? 'opponent' : 'challenger';
       for(var key in crSnap){
         // I have no idea so don't ask
         const tmp = function(k){
           return function(){
-            database.ref(`users/${crSnap[key].opponent}`).on('value', (userSnap) => {
+            database.ref(`users/${crSnap[key][other]}`).on('value', (userSnap) => {
               var user = userSnap.val();
               var crObj = {
                 username: user.username,
                 key: k,
               };
               challengeRequests.push(crObj);
-              component.setState({ challengeRequests: challengeRequests });
+              component.setState(byPropKey(prop, challengeRequests));
             });
           }
         }(key);
@@ -65,15 +72,20 @@ class HomePage extends Component{
   render(){
     const {
       announcements,
-      challengeRequests,
+      challengerRequests,
+      opponentRequests,
     } = this.state;
     var announcementElems = <h3>No Announcements!</h3>;
     var challengeElems = <h3>No Pending Challenge Requests!</h3>
+    var opponentElems = <h3>No one wants to fight you!</h3>
     if(!!announcements){
       announcementElems = <Announcements announcements={announcements}/>;
     }
-    if(!!challengeRequests){
-      challengeElems = <HomeChallengeRequestList userChallengeRequestList={challengeRequests}/>;
+    if(!!challengerRequests){
+      challengeElems = <HomeChallengeRequestList userChallengeRequestList={challengerRequests} type={"challenger"}/>;
+    }
+    if(!!opponentRequests){
+      opponentElems = <HomeChallengeRequestList userChallengeRequestList={opponentRequests} type={"opponent"} />;
     }
     return(
       <div>
@@ -86,8 +98,14 @@ class HomePage extends Component{
             </div>
           </div>
           <div id="home-crs">
-            <h2>My Pending Challenge Matches</h2>
-            {challengeElems}
+            <div>
+              <h2>My Pending Challenge Matches</h2>
+              {challengeElems}
+            </div>
+            <div>
+              <h2>People Who Challenged Me to a Duel</h2>
+              {opponentElems}
+            </div>
           </div>
         </div>
       </div>
