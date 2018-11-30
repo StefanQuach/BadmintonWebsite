@@ -100,36 +100,39 @@ class EditAnn extends Component {
     const isInvalid = title === '' || content === '';
 
     return(
-      <form id={this.props.id} onSubmit={event => this.onSubmit(event)}>
-        <div className="form-group">
-          <input
-            id="announcement-title"
-            value={title}
-            onChange={event => this.setState(byPropKey('title', event.target.value))}
-            type="text"
-            placeholder="Title"
-          />
-        </div>
-        <div className="form-group">
-          <textarea
-            id="announcement-content"
-            className="announcement-textarea"
-            onChange={event => this.setState(byPropKey('content', event.target.value))}
-            value={content}></textarea>
-        </div>
-        <div className="form-group">
-          <input
-            id="announcement-public"
-            checked={Boolean(publicEvent)}
-            onChange={event => this.setState(byPropKey('publicEvent', !!event.target.checked))}
-            type="checkbox"/> Check this to make the announcement public
-        </div>
-        <div className="form-group">
-          <button disabled={isInvalid} type="submit">
-            Update Announcement
-          </button>
-        </div>
-      </form>
+      <div id={this.props.id}>
+        <form onSubmit={event => this.onSubmit(event)}>
+          <div className="form-group">
+            <input
+              id="announcement-title"
+              value={title}
+              onChange={event => this.setState(byPropKey('title', event.target.value))}
+              type="text"
+              placeholder="Title"
+            />
+          </div>
+          <div className="form-group">
+            <textarea
+              id="announcement-content"
+              className="announcement-textarea"
+              onChange={event => this.setState(byPropKey('content', event.target.value))}
+              value={content}></textarea>
+          </div>
+          <div className="form-group">
+            <input
+              id="announcement-public"
+              checked={Boolean(publicEvent)}
+              onChange={event => this.setState(byPropKey('publicEvent', !!event.target.checked))}
+              type="checkbox"/> Check this to make the announcement public
+          </div>
+          <div className="form-group">
+            <button disabled={isInvalid} type="submit">
+              Update Announcement
+            </button>
+          </div>
+        </form>
+        <button onClick={this.props.onClick}>Cancel</button>
+      </div>
     );
   }
 }
