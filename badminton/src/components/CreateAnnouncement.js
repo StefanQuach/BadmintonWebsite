@@ -17,10 +17,9 @@ const INITIAL_STATE = {
 class CreateAnnouncementPage extends Component{
   constructor(props){
     super(props);
-
     this.state = {...INITIAL_STATE};
   }
-//componentDidMount
+
   onSubmit(event) {
     event.preventDefault();
 
@@ -69,7 +68,7 @@ class CreateAnnouncementPage extends Component{
           <div className="form-group">
             <textarea
               id="announcement-content"
-              class="announcement-textarea"
+              className="announcement-textarea"
               onChange={event => this.setState(byPropKey('content', event.target.value))}
               value={content}></textarea>
           </div>

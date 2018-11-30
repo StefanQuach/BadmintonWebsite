@@ -6,6 +6,8 @@ import { byPropKey } from '../helpers/helpers';
 import Announcements from './Announcement';
 
 class LandingPage extends Component {
+  _isMounted = false;
+
   constructor(props){
     super(props);
     this.state = {
@@ -14,11 +16,13 @@ class LandingPage extends Component {
   }
 
   componentDidMount(){
+    this._isMounted = true;
     var component = this;
     this.listener = database.ref(`announcements`)
       .orderByChild('timestamp')
       .limitToLast(100)
       .on('value', (snapshot) => {
+      if(this._isMounted) {
       var announcements = [];
       snapshot.forEach(function(childSnap){
         var announcement = childSnap.val()
@@ -31,8 +35,14 @@ class LandingPage extends Component {
             component.setState(byPropKey('announcements', announcements));
           });
         }
+
       });
+    }
     });
+  }
+
+  componentWillUnmount(){
+    this._isMounted = false;
   }
 
   render(){
