@@ -126,7 +126,7 @@ class EditAnn extends Component {
         </div>
         <div className="form-group">
           <button disabled={isInvalid} type="submit">
-            Create Announcement
+            Update Announcement
           </button>
         </div>
       </form>
@@ -145,10 +145,12 @@ class AdminButton extends Component {
   }
   componentDidMount() {
     this._isMounted = true;
-    adminCheck(firebase.auth.currentUser).then((isAdmin) => {
-      if(this._isMounted) {
-        this.setState({admin: isAdmin});
-      }
+    firebase.auth.onAuthStateChanged((user) => {
+      adminCheck(user).then((isAdmin) => {
+        if(this._isMounted) {
+          this.setState({admin: isAdmin});
+        }
+      });
     });
   }
 
