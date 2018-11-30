@@ -4,7 +4,7 @@ import withAuthorization from './withAuthorization';
 import { db as database } from '../firebase/firebase';
 import { byPropKey } from '../helpers/helpers';
 
-import { Announcements } from './CreateAnnouncement';
+import Announcements from './Announcement';
 
 class HomePage extends Component{
   constructor(props){

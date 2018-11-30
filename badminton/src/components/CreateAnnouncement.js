@@ -7,6 +7,8 @@ import { withRouter } from 'react-router-dom';
 import withAuthorization from './withAuthorization';
 import * as routes from '../constants/routes';
 
+var Button = require("react-bootstrap/lib/Button");
+
 const INITIAL_STATE = {
   title: '',
   content: ''
@@ -91,42 +93,4 @@ class CreateAnnouncementPage extends Component{
 
 const authCondition = adminCheck;
 
-const Announcements = ({ announcements }) => {
-  var announcementElems = announcements.map((ann) =>
-    <div className="announcement" key={ann.key}>
-      <h3>{ann.title}</h3>
-      <div className="announcement-caption">By: {ann.author}</div>
-      <div className="announcement-caption">Last Updated {convertUnixTime(ann.timestamp)}</div>
-      <div className="announcement-content">{ann.content}</div>
-      <AdminButton text={"Edit"} onClick={() => console.log('edit')}/>
-      <hr/>
-    </div>
-  );
-  return(
-    <div>{announcementElems}</div>
-  );
-}
-
-class AdminButton extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-  componentDidMount() {
-    adminCheck(firebase.auth.currentUser).then((isAdmin) => {
-      this.setState({admin: isAdmin});
-    });
-
-  }
-
-  render() {
-    return(
-      <div>{this.state.admin ? <button onClick={this.props.onClick}>{this.props.text}</button> : <div></div>}</div>
-    );
-  }
-}
-
 export default withAuthorization(authCondition)(withRouter(CreateAnnouncementPage));
-export {
-  Announcements,
-}

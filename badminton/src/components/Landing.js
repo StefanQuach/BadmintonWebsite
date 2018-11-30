@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { db as database } from '../firebase/firebase';
 import { byPropKey } from '../helpers/helpers';
 
-import { Announcements } from './CreateAnnouncement';
+import Announcements from './Announcement';
 
 class LandingPage extends Component {
   constructor(props){
