@@ -22,7 +22,13 @@ class SingleAnnouncement extends Component {
   }
 
   deleteEvent() {
-    database.ref(`announcements`).child(this.props.ann.key).remove();
+    database.ref(`announcements`).child(this.props.ann.key).remove(function(error) {
+      if(error) {
+        console.log("delete error");
+      } else {
+        console.log("delete success");
+      }
+    });
   }
 
   render(){

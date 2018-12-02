@@ -27,18 +27,18 @@ class HomePage extends Component{
       .limitToLast(100)
       .on('value', (snapshot) => {
       if(this._isMounted) {
-      var announcements = [];
-      snapshot.forEach(function(childSnap){
-        var announcement = childSnap.val()
-        announcement.key = childSnap.key;
-        announcements.unshift(announcement);
-        // Replace the author's id with their username
-        database.ref(`users/${announcement.author}`).once('value', (authorSnap) => {
-          announcement.author = authorSnap.val().username;
-          component.setState(byPropKey('announcements', announcements));
+        var announcements = [];
+        snapshot.forEach(function(childSnap){
+          var announcement = childSnap.val()
+          announcement.key = childSnap.key;
+          announcements.unshift(announcement);
+          // Replace the author's id with their username
+          database.ref(`users/${announcement.author}`).once('value', (authorSnap) => {
+            announcement.author = authorSnap.val().username;
+            component.setState(byPropKey('announcements', announcements));
+          });
         });
-      });
-    }
+      }
     });
     this.getChallengeRequests('challenger', 'challengerRequests');
     this.getChallengeRequests('opponent', 'opponentRequests');
