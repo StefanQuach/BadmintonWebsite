@@ -51,18 +51,16 @@
   flex-grow:1;
 }
 
-.challenge-request{
+.cr-info{
   border: solid black 1px;
   margin: 5px;
+  border-radius: 10px;
+  background-color: #a3a3a3;
 }
 
-.cr-info, .cr-control{
+.cr-details{
   display: flex;
   justify-content: space-between;
-}
-
-.cr-info{
-  background-color: #a3a3a3;
 }
 
 .cr-participant, .cr-text{
@@ -85,8 +83,27 @@
   justify-content: flex-end;
 }
 
-.cr-control{
+.cr-match-reports{
+  display: flex;
+  justify-content: space-between;
+}
+
+.cr-match-report{
+  display: flex;
+  justify-content: space-between;
+}
+
+.cr-game-report{
   background-color: #00d9ff;
+  margin: 5px;
+  min-width: 100px;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.cr-control{
+  display: flex;
+  justify-content: flex-end;
 }
 
 .cr-button{
@@ -101,6 +118,7 @@
 .cr-dismiss{
   background-color: #ff5e5e;
 }
+
 .announcement-caption {
   font-size: 10pt;
   color: #808080;

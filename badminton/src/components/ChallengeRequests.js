@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import withAuthorization from './withAuthorization';
 import { firebase, db } from '../firebase';
 import { db as database } from '../firebase/firebase';
-import { adminCheck, byPropKey } from '../helpers/helpers';
+import { adminCheck, byPropKey, arrayEqual } from '../helpers/helpers';
 import Alert from './Alert';
 
 var Button = require("react-bootstrap/lib/Button");
@@ -50,16 +50,26 @@ class ChallengeRequest extends Component{
     this.state = {...props};
     this.state.challenger = null;
     this.state.opponent = null;
+    this.state.challengerReport = null;
+    this.state.opponentReport = null;
   }
 
   componentDidMount(){
     this.getUserInfo(this.state.cKey, 'challenger');
     this.getUserInfo(this.state.oKey, 'opponent');
+    this.getGamesReport('challenger');
+    this.getGamesReport('opponent');
   }
 
   getUserInfo(uid, stateKey){
     database.ref(`users/${uid}`).once('value', (snapshot) => {
       this.setState(byPropKey(stateKey, snapshot.val()));
+    });
+  }
+
+  getGamesReport(role){
+    database.ref(`pending-challenge-requests/${this.state.requestKey}/${role}-report`).on('value', (snapshot) => {
+      this.setState(byPropKey(role + "Report", snapshot.val()));
     });
   }
 
@@ -72,31 +82,63 @@ class ChallengeRequest extends Component{
   }
 
   render(){
+    const challengerReport = this.state.challengerReport;
+    const opponentReport = this.state.opponentReport;
+    const valid = arrayEqual(challengerReport, opponentReport);
+    console.log(valid);
     return(
       <div className="challenge-request">
         <div className="cr-info">
-          <div className="cr-challenger cr-participant">
-            {this.state.challenger && this.state.challenger.username}
+          <div className="cr-details">
+            <div className="cr-challenger cr-participant">
+              {this.state.challenger && this.state.challenger.username}
+            </div>
+            <div className="cr-text">
+              CHALLENGES
+            </div>
+            <div className="cr-opponent cr-participant">
+              {this.state.opponent && this.state.opponent.username}
+            </div>
           </div>
-          <div className="cr-text">
-            CHALLENGES
-          </div>
-          <div className="cr-opponent cr-participant">
-            {this.state.opponent && this.state.opponent.username}
+          <div className="cr-match-reports">
+            {!!challengerReport && <MatchReport scores={challengerReport.gameScores}/>}
+            {!!opponentReport && <MatchReport scores={opponentReport.gameScores}/>}
           </div>
         </div>
         <div className="cr-control">
           <div className="cr-ctrl-action">
-            <button className="cr-resolve cr-button">Resolve</button>
+            {valid && <button className="cr-resolve cr-button">Resolve</button>}
           </div>
           <div className="cr-ctrl-action">
-            <button className="cr-dismiss cr-button" onClick={() => {this.dismiss()}}>Dismiss</button>
+            {!valid && <button className="cr-dismiss cr-button" onClick={() => {this.dismiss()}}>Dismiss</button>}
           </div>
         </div>
       </div>
     );
   }
 }
+
+const MatchReport = ({ scores }) => {
+  let games = [];
+  for(let i = 0; i<scores.length/2; i++){
+    games.push(<GameReport cScore={scores[2*i]} oScore={scores[2*i+1]} gameNum={i+1} key={i}/>);
+  }
+  console.log(scores);
+  return(
+    <div className="cr-match-report">
+      {games.map((game) => game)}
+    </div>
+  );
+}
+
+const GameReport = ({ cScore, oScore, gameNum }) =>
+  <div className="cr-game-report">
+    <div className="cr-game-report-title">Game {gameNum}</div>
+    <div className="cr-game-report-scores">
+      <div className="cr-game-report-challenger cr-game-report-participant">Challenger: {cScore}</div>
+      <div className="cr-game-report-opponent cr-game-report-participant">Opponent: {oScore}</div>
+    </div>
+  </div>
 
 const HomeChallengeRequestList = ({ userChallengeRequestList, type }) =>
   <div>
