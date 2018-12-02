@@ -73,6 +73,37 @@ class ChallengeRequest extends Component{
     });
   }
 
+  resolve(){
+    const scores = this.state.challengerReport.gameScores;
+    const challengerWon = challengerWins(scores) > opponentWins(scores);
+    if(this.state.challenger.rank > this.state.opponent.rank && challengerWon
+      || this.state.opponent.rank > this.state.challenger.rank && !challengerWon){
+      this.swap();
+    }
+    database.ref(`pending-challenge-requests/${this.state.requestKey}`).once('value', (snapshot) => {
+      const key = snapshot.key;
+      let newObj = {};
+      newObj[key] = snapshot.val();
+      database.ref(`archive-challenge-requests`).push(newObj);
+      database.ref(`pending-challenge-requests/${this.state.requestKey}`).remove();
+    });
+  }
+
+  /**
+   * Swaps the challenger's and opponent's ranks.
+   * @return {null}
+   */
+  swap(){
+    const cRank = this.state.challenger.rank;
+    const oRank = this.state.opponent.rank;
+    database.ref(`users/${this.state.cKey}`).update({
+      rank: oRank,
+    });
+    database.ref(`users/${this.state.oKey}`).update({
+      rank: cRank,
+    });
+  }
+
   dismiss(){
     const passphrase = 'dismiss'
     const confirm = prompt('You are about to dismiss this challenge request. Type "' + passphrase + '" if you\'re sure');
@@ -84,8 +115,10 @@ class ChallengeRequest extends Component{
   render(){
     const challengerReport = this.state.challengerReport;
     const opponentReport = this.state.opponentReport;
-    const valid = arrayEqual(challengerReport, opponentReport);
-    console.log(valid);
+    var valid = false;
+    if(!!challengerReport && !!opponentReport){
+      valid = arrayEqual(challengerReport.gameScores, opponentReport.gameScores);
+    }
     return(
       <div className="challenge-request">
         <div className="cr-info">
@@ -107,10 +140,10 @@ class ChallengeRequest extends Component{
         </div>
         <div className="cr-control">
           <div className="cr-ctrl-action">
-            {valid && <button className="cr-resolve cr-button">Resolve</button>}
+            {valid && <Button className="cr-resolve cr-button" onClick={() => {this.resolve()}}>Resolve</Button>}
           </div>
           <div className="cr-ctrl-action">
-            {!valid && <button className="cr-dismiss cr-button" onClick={() => {this.dismiss()}}>Dismiss</button>}
+            {!valid && <Button className="cr-dismiss cr-button" onClick={() => {this.dismiss()}}>Dismiss</Button>}
           </div>
         </div>
       </div>
@@ -123,7 +156,6 @@ const MatchReport = ({ scores }) => {
   for(let i = 0; i<scores.length/2; i++){
     games.push(<GameReport cScore={scores[2*i]} oScore={scores[2*i+1]} gameNum={i+1} key={i}/>);
   }
-  console.log(scores);
   return(
     <div className="cr-match-report">
       {games.map((game) => game)}
@@ -178,7 +210,11 @@ class HomeChallengeRequest extends Component{
     }else{
       try{
         const score = parseInt(evt.target.value);
-        gameScores[ind] = score;
+        if(isNaN(score)){
+          gameScores[ind] = '';
+        }else{
+          gameScores[ind] = score;
+        }
       }catch(e){
         gameScores[ind] = '';
       }
@@ -218,7 +254,7 @@ class HomeChallengeRequest extends Component{
 
       &&
 
-      (this.challengerWins() === 2 || this.opponentWins() === 2)
+      (challengerWins(scores) === 2 || opponentWins(scores) === 2)
     );
   }
 
@@ -241,24 +277,6 @@ class HomeChallengeRequest extends Component{
       return(score2 - score1 >= 2);
     }
     return false;
-  }
-
-  /**
-   * Computes number of times the challenger won.
-   * @return {int} Number of times the challenger won
-   */
-  challengerWins(){
-    const scores = this.state.gameScores;
-    return(+(scores[0] > scores[1]) + +(scores[2] > scores[3]) + +(scores[4] > scores[5]));
-  }
-
-  /**
-   * Computes number of times the opponent won.
-   * @return {int} Number of times the opponent won
-   */
-  opponentWins(){
-    const scores = this.state.gameScores;
-    return(+(scores[0] < scores[1]) + +(scores[2] < scores[3]) + +(scores[4] < scores[5]));
   }
 
   render(){
@@ -288,6 +306,22 @@ class HomeChallengeRequest extends Component{
       </div>
     );
   }
+}
+
+/**
+ * Computes number of times the challenger won.
+ * @return {int} Number of times the challenger won
+ */
+function challengerWins(scores){
+  return(+(scores[0] > scores[1]) + +(scores[2] > scores[3]) + +(scores[4] > scores[5]));
+}
+
+/**
+ * Computes number of times the opponent won.
+ * @return {int} Number of times the opponent won
+ */
+function opponentWins(scores){
+  return(+(scores[0] < scores[1]) + +(scores[2] < scores[3]) + +(scores[4] < scores[5]));
 }
 
 const ChallengeRequestGame = ({ scores, onChange, gameNum, type }) =>{
