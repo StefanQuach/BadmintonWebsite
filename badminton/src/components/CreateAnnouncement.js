@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 
-import { firebase, db } from '../firebase'
+import { firebase, db, auth } from '../firebase'
 import { db as database } from '../firebase/firebase';
 import { byPropKey, adminCheck, convertUnixTime } from '../helpers/helpers';
 import { withRouter } from 'react-router-dom';
 import withAuthorization from './withAuthorization';
 import * as routes from '../constants/routes';
+
+var Button = require("react-bootstrap/lib/Button");
 
 const INITIAL_STATE = {
   title: '',
@@ -15,7 +17,6 @@ const INITIAL_STATE = {
 class CreateAnnouncementPage extends Component{
   constructor(props){
     super(props);
-
     this.state = {...INITIAL_STATE};
   }
 
@@ -67,11 +68,11 @@ class CreateAnnouncementPage extends Component{
           <div className="form-group">
             <textarea
               id="announcement-content"
-              class="announcement-textarea"
+              className="announcement-textarea"
               onChange={event => this.setState(byPropKey('content', event.target.value))}
               value={content}></textarea>
           </div>
-          <div className="form-grou">
+          <div className="form-group">
             <input
               id="announcement-public"
               value={false}
@@ -107,6 +108,3 @@ const Announcements = ({ announcements }) =>{
 }
 
 export default withAuthorization(authCondition)(withRouter(CreateAnnouncementPage));
-export {
-  Announcements,
-}

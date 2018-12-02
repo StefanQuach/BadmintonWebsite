@@ -66,8 +66,14 @@ class Ranks extends Component{
     setTimeout(() => {this.setState(byPropKey('alert', null))}, 4000);
   }
 
-  deactivate(uid){
-    // TODO: deactivate user.
+  deactivate(uid, username){
+    const passphrase = 'deactivate';
+    var confirmation = prompt("You are about to deactivate " + username + " to a potato instead of a mighty birdie smasher. Type '" + passphrase + "' if you're sure.");
+    if(confirmation === passphrase){
+      database.ref(`users/${uid}`).update({ // setting the rank to -1 means deactivated
+        rank:-1
+      });
+    }
   }
 
   promote(uid){
@@ -91,9 +97,11 @@ class Ranks extends Component{
       var newUsers = []
       snapshot.forEach(function(childSnap){
         var user_obj = childSnap.val();
-        user_obj.key = childSnap.key;
-        user_obj.challengeButton = false;
-        newUsers.push(user_obj);
+        if(user_obj.rank!==-1) {
+          user_obj.key = childSnap.key;
+          user_obj.challengeButton = false;
+          newUsers.push(user_obj);
+        }
       });
       //console.log(newUsers);
       this.setState({users: newUsers}, () => {
@@ -140,7 +148,7 @@ class Ranks extends Component{
             {user.challengeButton && <ChallengeButton user={user} onClick={this.requestChallenge}/>}
             {!user.admin && currUser.admin && <AdminButton text={'Promote To Admin'} onClick={() => this.promote(user.key)}/>}
             {user.admin  && currUser.admin && <AdminButton text={'Demote Admin'} onClick={() => this.demote(user.key, user.username)} />}
-            {currUser.admin && <AdminButton text={'Kick'} onClick={() => this.deactivate(user.key)}/>}
+            {currUser.admin && <AdminButton text={'Deactivate'} onClick={() => this.deactivate(user.key, user.username)}/>}
           </div>
         </div>
       );
