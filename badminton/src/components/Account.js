@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { db as database } from '../firebase/firebase';
 import { firebase, admin, db } from '../firebase';
 import withAuthorization from './withAuthorization';
+import Alert from './Alert';
 
 var Button = require("react-bootstrap/lib/Button");
 
@@ -45,16 +46,30 @@ class UserInfo extends Component{
   }
 }
 
+const UserTable = ({ info }) =>
+  <div>
+    {info.admin && <div>You are an admin</div>}
+    <div>{info.username}</div>
+    <div>{info.email}</div>
+    <div>Rank: {info.rank}</div>
+  </div>
+
 class ChangeEmailForm extends Component{
+
+  _isMounted = false;
 
   INITIAL_STATE = {
     email: '',
+    alert: null,
   }
 
   constructor(props){
     super(props);
     this.state = {...this.INITIAL_STATE};
   }
+
+  componentDidMount(){ this._isMounted = true; }
+  componentWillUnmount(){ this._isMounted = false; }
 
   change(event){
     this.setState({email: event.target.value})
@@ -63,14 +78,16 @@ class ChangeEmailForm extends Component{
   submit(event){
     event.preventDefault();
     const email = this.state.email;
+    this.setState({email: ''});
     firebase.auth.currentUser.updateEmail(email)
       .then(() => {
         database.ref(`users/${firebase.auth.currentUser.uid}`).update({
           email: email,
-        }, () => {this.setState({...this.INITIAL_STATE});});
+        });
       })
       .catch((error) => {
-        console.log(error);
+        if(this._isMounted){this.setState({alert: <Alert color={'#ff0000'} text={error.message}/>});}
+        setTimeout(() => {if(this._isMounted){this.setState({alert: null});}}, 3000);
       });
   }
 
@@ -79,27 +96,20 @@ class ChangeEmailForm extends Component{
     return(
       <div>
         <h2>Update email</h2>
-        <form>
+        <form onSubmit={(event) => this.submit(event)}>
           <input
             type="text"
             placeholder="New Email"
             onChange={(event) => this.change(event)}
             value={this.state.email}
           />
-          <Button disabled={!isValid} onClick={(event) => this.submit(event)}>Change Email</Button>
+          <Button disabled={!isValid} type="submit">Change Email</Button>
         </form>
+        {this.state.alert}
       </div>
     );
   }
 }
-
-const UserTable = ({ info }) =>
-  <div>
-    {info.admin && <div>You are an admin</div>}
-    <div>{info.username}</div>
-    <div>{info.email}</div>
-    <div>Rank: {info.rank}</div>
-  </div>
 
 const authCondition = (authUser) => !!authUser;
 
