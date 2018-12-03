@@ -76,8 +76,8 @@ class ChallengeRequest extends Component{
   resolve(){
     const scores = this.state.challengerReport.gameScores;
     const challengerWon = challengerWins(scores) > opponentWins(scores);
-    if(this.state.challenger.rank > this.state.opponent.rank && challengerWon
-      || this.state.opponent.rank > this.state.challenger.rank && !challengerWon){
+    if((this.state.challenger.rank > this.state.opponent.rank && challengerWon)
+      || (this.state.opponent.rank > this.state.challenger.rank && !challengerWon)){
       this.swap();
     }
     database.ref(`pending-challenge-requests/${this.state.requestKey}`).once('value', (snapshot) => {
@@ -244,13 +244,13 @@ class HomeChallengeRequest extends Component{
   checkScores(){
     const scores = this.state.gameScores;
     return (
+      ((this.checkGame(scores[0], scores[1])
+      && this.checkGame(scores[2], scores[3])
+      && this.checkGame(scores[4], scores[5])) ||
+
       (this.checkGame(scores[0], scores[1])
       && this.checkGame(scores[2], scores[3])
-      && this.checkGame(scores[4], scores[5]) ||
-
-      this.checkGame(scores[0], scores[1])
-      && this.checkGame(scores[2], scores[3])
-      && scores[4] === "" && scores[5] === "")
+      && scores[4] === "" && scores[5] === ""))
 
       &&
 

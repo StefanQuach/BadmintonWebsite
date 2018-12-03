@@ -15,6 +15,7 @@ const RankingPage = () =>
   </div>
 
 class Ranks extends Component{
+  _isMounted = false;
   constructor(props){
     super(props);
     this.state = {
@@ -68,10 +69,35 @@ class Ranks extends Component{
 
   deactivate(uid, username){
     const passphrase = 'deactivate';
+    let userRank;
     var confirmation = prompt("You are about to deactivate " + username + " to a potato instead of a mighty birdie smasher. Type '" + passphrase + "' if you're sure.");
     if(confirmation === passphrase){
-      database.ref(`users/${uid}`).update({ // setting the rank to -1 means deactivated
-        rank:-1
+      database.ref(`users/${uid}`).once('value', (snapshot) => {
+        userRank = snapshot.val().rank;
+        console.log("rank before deactivation:" + userRank);
+      });
+      database.ref(`users/${uid}`).update({ // setting the rank to -1000 means deactivated
+        rank:-1000,
+        admin: false
+      }, function(error) {
+        if(error) {
+          console.log("Failed to deactivate");
+        } else { //updating other's ranks after deactivation
+          database.ref(`users`)
+            .orderByChild('rank')
+            .startAt(userRank)
+            .once('value', (snapshot) => {
+              console.log(snapshot.val());
+              snapshot.forEach(function(childSnap) {
+                console.log(childSnap.val());
+                let currentUser = childSnap.val();
+                let newRank = currentUser.rank - 1;
+                database.ref(`users/`+childSnap.key).update({
+                  rank: newRank
+                });
+              })
+            });
+        }
       });
     }
   }
@@ -93,43 +119,54 @@ class Ranks extends Component{
   }
 
   componentDidMount(){
+    this._isMounted = true;
     database.ref(`users`).orderByChild('rank').on('value', (snapshot) => {
       var newUsers = []
       snapshot.forEach(function(childSnap){
         var user_obj = childSnap.val();
-        if(user_obj.rank!==-1) {
+        if(user_obj.rank > 0) {
           user_obj.key = childSnap.key;
           user_obj.challengeButton = false;
           newUsers.push(user_obj);
         }
       });
       //console.log(newUsers);
-      this.setState({users: newUsers}, () => {
-        database.ref(`users/${firebase.auth.currentUser.uid}`).once('value', (snapshot) => {
-          var snapUser = snapshot.val();
-          var rank = snapUser.rank;
-          var id = snapshot.key;
-          snapUser.key = id;
-          var users = this.state.users;
-          this.setState(byPropKey('currentUser', snapUser));
-          database.ref(`pending-challenge-requests`).on('value', (requestSnap) => {
-            var requests = requestSnap.val();
-            for(var i = 0; i<users.length; i++){
-              var rankDiff = rank - users[i].rank;
-              if(rankDiff > 0 && rankDiff <= config.RANK_DIST){
-                users[i].challengeButton = true;
-              }
-              for(var key in requests){
-                if(requests[key].challenger === id && requests[key].opponent === users[i].key){
-                  users[i].challengeButton = false;
+      if(this._isMounted) {
+        this.setState({users: newUsers}, () => {
+          database.ref(`users/${firebase.auth.currentUser.uid}`).once('value', (snapshot) => {
+            var snapUser = snapshot.val();
+            var rank = snapUser.rank;
+            var id = snapshot.key;
+            snapUser.key = id;
+            var users = this.state.users;
+            if(this._isMounted) {
+              this.setState(byPropKey('currentUser', snapUser));
+              database.ref(`pending-challenge-requests`).on('value', (requestSnap) => {
+                var requests = requestSnap.val();
+                for(var i = 0; i<users.length; i++){
+                  var rankDiff = rank - users[i].rank;
+                  if(rankDiff > 0 && rankDiff <= config.RANK_DIST){
+                    users[i].challengeButton = true;
+                  }
+                  for(var key in requests){
+                    if(requests[key].challenger === id && requests[key].opponent === users[i].key){
+                      users[i].challengeButton = false;
+                    }
+                  }
                 }
-              }
+                if(this._isMounted) {
+                  this.setState(byPropKey('users', users));
+                }
+              });
             }
-            this.setState(byPropKey('users', users));
           });
         });
-      });
+      }
     });
+  }
+
+  componentWillUnmount(){
+    this._isMounted = false;
   }
 
   render(){
