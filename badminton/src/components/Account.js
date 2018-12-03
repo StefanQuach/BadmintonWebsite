@@ -145,7 +145,6 @@ class ChangePasswordForm extends Component{
         setTimeout(() => {if(this._isMounted){this.setState({alert: null});}}, 3000);
       })
       .catch((error) => {
-        console.log(error.message);
         if(this._isMounted){this.setState({alert: <Alert color={'#ff0000'} text={error.message}/>});}
         setTimeout(() => {if(this._isMounted){this.setState({alert: null});}}, 4000);
       });
