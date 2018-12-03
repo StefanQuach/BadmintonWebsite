@@ -11,6 +11,7 @@ const AccountPage = () =>
     <h1>Account Page</h1>
     <UserInfo/>
     <ChangeEmailForm />
+    <ChangePasswordForm />
   </div>
 
 class UserInfo extends Component{
@@ -104,6 +105,72 @@ class ChangeEmailForm extends Component{
             value={this.state.email}
           />
           <Button disabled={!isValid} type="submit">Change Email</Button>
+        </form>
+        {this.state.alert}
+      </div>
+    );
+  }
+}
+
+class ChangePasswordForm extends Component{
+
+  _isMounted = false;
+
+  constructor(props){
+    super(props);
+    this.state = {
+      npassword1: '',
+      npassword2: '',
+      alert: null,
+    };
+  }
+
+  componentDidMount(){this._isMounted = true};
+  componentWillUnmount(){this._isMounted = false;}
+
+  change(key, event){
+    this.setState({[key]: event.target.value});
+  }
+
+  submit(event){
+    event.preventDefault();
+    const npass = this.state.npassword1;
+    this.setState({
+      npassword1: '',
+      npassword2: '',
+    });
+    firebase.auth.currentUser.updatePassword(npass)
+      .then(() => {
+        if(this._isMounted){this.setState({alert: <Alert color={'#00ff00'} text={'Successful update'}/>});}
+        setTimeout(() => {if(this._isMounted){this.setState({alert: null});}}, 3000);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        if(this._isMounted){this.setState({alert: <Alert color={'#ff0000'} text={error.message}/>});}
+        setTimeout(() => {if(this._isMounted){this.setState({alert: null});}}, 4000);
+      });
+  }
+
+  render(){
+    const isValid = this.state.npassword1 === this.state.npassword2 && this.state.npassword1 !== '';
+
+    return(
+      <div>
+        <h2>Change Password</h2>
+        <form onSubmit={(event) => {this.submit(event)}}>
+          <input
+            value={this.state.npassword1}
+            type="password"
+            placeholder="New Password"
+            onChange={(event) => {this.change('npassword1', event);}}
+          />
+          <input
+            value={this.state.npassword2}
+            type="password"
+            placeholder="Confirm New Password"
+            onChange={(event) => {this.change('npassword2', event);}}
+          />
+          <Button disabled={!isValid} type="submit">Change Password</Button>
         </form>
         {this.state.alert}
       </div>
