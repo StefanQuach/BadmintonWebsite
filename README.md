@@ -43,3 +43,29 @@ We plan to use Reactjs for the framework as well as Firebase for our database.
 * Liking global posts
 * Changing password
 * Email confirmation on account creation and email change
+
+
+##Assignment Information
+###Link:
+We used firebase hosting to host our website, linked below:  
+https://badminton-87565.firebaseapp.com/
+
+###Creative Portion
+####Password Changing
+On top of being able to change emails, users can change passwords via the Account Information page
+
+####Public Announcements
+Announcements can be made public on creation or editing. Public announcements will appear on the Landing page whereas both
+public and private announcements appear on the Home page (which is protected). 
+
+####Deactivating Users
+Once a user graduates of leaves the club, an admin can deactivate that user. That user is now unable to be ranked or submit
+challenge requests. 
+
+####Cancelling Challenge requests
+Admins have the full authority over challenge requests. As such, they are able to dismiss challenge requests if they are incomplete
+(as well as approve them if they are complete). Furthermore, the owner (challenger) of the challenge request is able to cancel
+their own challenge request.
+
+####Email confirmation 
+//TODO
