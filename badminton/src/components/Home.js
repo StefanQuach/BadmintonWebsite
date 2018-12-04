@@ -53,8 +53,6 @@ class HomePage extends Component{
       .equalTo(firebase.auth.currentUser.uid)
       .on('value', (snapshot) => {
       // let mountBool = this._isMounted;
-      console.log("updating challenge requests");
-      console.log(snapshot.val());
       if(!!snapshot.val()) {
         var challengeRequests = [];
         var crSnap = snapshot.val();
