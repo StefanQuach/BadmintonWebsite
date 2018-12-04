@@ -10,3 +10,4 @@ export const PASSWORD_FORGET = '/pw-forget';
 export const RANKING = '/ranking';
 export const CREATE_ANNOUNCEMENT = '/create-announcement';
 export const CHALLENGE_REQUESTS = '/challenge-requests';
+export const ABOUT = '/about';

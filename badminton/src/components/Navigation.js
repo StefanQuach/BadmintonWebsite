@@ -32,7 +32,7 @@ const Navigation = () =>
           <NavItem eventKey={1} componentClass={Link} href="/ranking" to="/ranking">
             Rankings
           </NavItem>
-          <NavItem eventKey={2} href="#">
+          <NavItem eventKey={2} componentClass={Link} href="/about" to="/about">
             About Us
           </NavItem>
         </Nav>

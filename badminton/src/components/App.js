@@ -17,6 +17,7 @@ import AccountPage from './Account';
 import RankingPage from './Ranking';
 import CreateAnnouncementPage from './CreateAnnouncement';
 import ChallengeRequestPage from './ChallengeRequests';
+import AboutPage from './AboutUs';
 
 import * as routes from '../constants/routes';
 
@@ -60,6 +61,10 @@ class App extends Component {
             <Route
               exact path={routes.CHALLENGE_REQUESTS}
               component={ChallengeRequestPage}
+            />
+            <Route
+              exact path={routes.ABOUT}
+              component={AboutPage}
             />
             <Redirect to='/' />
           </Switch>
