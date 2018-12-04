@@ -68,4 +68,4 @@ Admins have the full authority over challenge requests. As such, they are able t
 their own challenge request.
 
 ####Email confirmation 
-//TODO
+When a user is changes their email information, a confirmation email is sent to the old email notifying the user of the change.
