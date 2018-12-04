@@ -132,12 +132,12 @@ class EditAnn extends Component {
               type="checkbox"/> Check this to make the announcement public
           </div>
           <div className="form-group">
-            <button disabled={isInvalid} type="submit">
+            <Button disabled={isInvalid} type="submit">
               Update Announcement
-            </button>
+            </Button>
           </div>
         </form>
-        <button onClick={this.props.onClick}>Cancel</button>
+        <Button onClick={this.props.onClick}>Cancel</Button>
       </div>
     );
   }

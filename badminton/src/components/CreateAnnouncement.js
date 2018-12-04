@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { firebase, db, auth } from '../firebase'
 import { db as database } from '../firebase/firebase';
-import { byPropKey, adminCheck, convertUnixTime } from '../helpers/helpers';
+import { byPropKey, adminCheck } from '../helpers/helpers';
 import { withRouter } from 'react-router-dom';
 import withAuthorization from './withAuthorization';
 import * as routes from '../constants/routes';
@@ -80,9 +80,9 @@ class CreateAnnouncementPage extends Component{
               type="checkbox"/> Check this to make the announcement public
           </div>
           <div className="form-group">
-            <button disabled={isInvalid} type="submit">
+            <Button disabled={isInvalid} type="submit">
               Create Announcement
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -91,20 +91,5 @@ class CreateAnnouncementPage extends Component{
 }
 
 const authCondition = adminCheck;
-
-const Announcements = ({ announcements }) =>{
-  var announcementElems = announcements.map((ann) =>
-    <div className="announcement" key={ann.key}>
-      <h3>{ann.title}</h3>
-      <div className="announcement-caption">By: {ann.author}</div>
-      <div className="announcement-caption">Written at: {convertUnixTime(ann.timestamp)}</div>
-      <div className="announcement-content">{ann.content}</div>
-      <hr/>
-    </div>
-  );
-  return(
-    <div>{announcementElems}</div>
-  );
-}
 
 export default withAuthorization(authCondition)(withRouter(CreateAnnouncementPage));

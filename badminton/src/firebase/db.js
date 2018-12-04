@@ -14,7 +14,7 @@ export const doCreateUser = (id, username, email, admin) =>
     })
 
 export const onceGetUsers = () =>
-  db.ref(`users`).once('value');
+  db.ref(`users`).orderByChild('rank').startAt(0).once('value');
 
 export const userIsAdmin = (uid) => {
   return new Promise(function(resolve, reject){

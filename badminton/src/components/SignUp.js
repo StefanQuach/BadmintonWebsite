@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import {
   Link,
-  withRouter,
 } from 'react-router-dom';
 import * as helpers from '../helpers/helpers';
 
+import withAuthorization from './withAuthorization';
 import { auth } from '../firebase/firebase';
 import { db } from '../firebase';
 import * as routes from '../constants/routes';
 
+var Button = require('react-bootstrap/lib/Button');
+
 const SignUpPage = ({ history }) =>
   <div>
-    <h1>SignUp</h1>
+    <h1>Sign Up</h1>
     <SignUpForm history={history} />
   </div>
 
@@ -87,28 +89,28 @@ class SignUpForm extends Component {
           onChange={event => this.setState(helpers.byPropKey('username', event.target.value))}
           type="text"
           placeholder="Full Name"
-        />
+        /><br/>
         <input
           value={email}
           onChange={event => this.setState(helpers.byPropKey('email', event.target.value))}
           type="text"
           placeholder="Email Address"
-        />
+        /><br/>
         <input
           value={passwordOne}
           onChange={event => this.setState(helpers.byPropKey('passwordOne', event.target.value))}
           type="password"
           placeholder="Password"
-        />
+        /><br/>
         <input
           value={passwordTwo}
           onChange={event => this.setState(helpers.byPropKey('passwordTwo', event.target.value))}
           type="password"
           placeholder="Confirm Password"
-        />
-        <button disabled={isInvalid} type="submit">
+        /><br/>
+        <Button disabled={isInvalid} type="submit">
           Sign Up
-        </button>
+        </Button>
 
         { error && <p>{error.message}</p> }
       </form>
@@ -123,7 +125,9 @@ const SignUpLink = () =>
     <Link to={routes.SIGN_UP}>Sign Up</Link>
   </p>
 
-export default withRouter(SignUpPage);
+const authCondition = (authUser) => !authUser;
+
+export default withAuthorization(authCondition)(SignUpPage);
 
 export {
   SignUpForm,

@@ -23,6 +23,12 @@ const Navigation = () =>
       </Navbar.Header>
       <Navbar.Collapse>
         <Nav>
+          <AuthUserContext.Consumer>
+            {authUser => authUser
+              ? <NavItem eventKey={3} componentClass={Link} href={routes.HOME} to={routes.HOME}>Home</NavItem>
+              : <div></div>
+            }
+          </AuthUserContext.Consumer>
           <NavItem eventKey={1} componentClass={Link} href="/ranking" to="/ranking">
             Rankings
           </NavItem>
@@ -77,7 +83,6 @@ class NavigationAuth extends React.Component{
     return(
       <NavDropdown eventKey={1} title={firebase.auth.currentUser.displayName} id="basic-nav-dropdown">
         <MenuItem eventKey={1.1} componentClass={Link} href={routes.ACCOUNT} to={routes.ACCOUNT}>My Account</MenuItem>
-        <MenuItem eventKey={1.2} componentClass={Link} href={routes.HOME} to={routes.HOME}>Home</MenuItem>
         <MenuItem eventKey={1.3}>Something else here</MenuItem>
         {this.state.adminFuncs && this.state.adminFuncs.map((func) => func)}
         <MenuItem divider />
