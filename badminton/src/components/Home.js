@@ -28,6 +28,7 @@ class HomePage extends Component{
       .on('value', (snapshot) => {
       if(this._isMounted) {
         var announcements = [];
+        let mountBool = this._isMounted;
         snapshot.forEach(function(childSnap){
           var announcement = childSnap.val()
           announcement.key = childSnap.key;
@@ -40,8 +41,10 @@ class HomePage extends Component{
         });
       }
     });
-    this.getChallengeRequests('challenger', 'challengerRequests');
-    this.getChallengeRequests('opponent', 'opponentRequests');
+    if(this._isMounted) {
+      this.getChallengeRequests('challenger', 'challengerRequests');
+      this.getChallengeRequests('opponent', 'opponentRequests');
+    }
   }
 
   getChallengeRequests(role, prop){
@@ -49,26 +52,34 @@ class HomePage extends Component{
       .orderByChild(role)
       .equalTo(firebase.auth.currentUser.uid)
       .on('value', (snapshot) => {
-      var challengeRequests = [];
-      var crSnap = snapshot.val();
-      const component = this;
-      var other = role === 'challenger' ? 'opponent' : 'challenger';
-      for(var key in crSnap){
-        // I have no idea so don't ask
-        const tmp = function(k){
-          return function(){
-            database.ref(`users/${crSnap[key][other]}`).on('value', (userSnap) => {
-              var user = userSnap.val();
-              var crObj = {
-                username: user.username,
-                key: k,
-              };
-              challengeRequests.push(crObj);
-              component.setState(byPropKey(prop, challengeRequests));
-            });
-          }
-        }(key);
-        tmp();
+      // let mountBool = this._isMounted;
+      console.log("updating challenge requests");
+      console.log(snapshot.val());
+      if(!!snapshot.val()) {
+        var challengeRequests = [];
+        var crSnap = snapshot.val();
+        const component = this;
+        var other = role === 'challenger' ? 'opponent' : 'challenger';
+        for(var key in crSnap){
+          // I have no idea so don't ask
+          const tmp = function(k){
+            return function(){
+              database.ref(`users/${crSnap[key][other]}`).on('value', (userSnap) => {
+                var user = userSnap.val();
+                var crObj = {
+                  username: user.username,
+                  key: k,
+                };
+                challengeRequests.push(crObj);
+                component.setState(byPropKey(prop, challengeRequests));
+              });
+            }
+          }(key);
+          tmp();
+        }
+      } else {
+        const component = this;
+        component.setState(byPropKey(prop, null));
       }
     });
   }

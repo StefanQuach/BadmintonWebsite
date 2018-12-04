@@ -34,10 +34,12 @@ class Ranks extends Component{
         var requests = requestSnap.val();
         for(var rKey in requests){
           if(requests[rKey].challenger === currentUser && requests[rKey].opponent === key){
-            this.setState(byPropKey('alert', <Alert
-              text={'You already made this request.'}
-              color={'#ff0000'}
-            />));
+            if(this._isMounted) {
+              this.setState(byPropKey('alert', <Alert
+                text={'You already made this request.'}
+                color={'#ff0000'}
+              />));
+            }
             return;
           }
         }

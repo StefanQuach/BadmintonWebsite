@@ -9,6 +9,7 @@ import Alert from './Alert';
 var Button = require("react-bootstrap/lib/Button");
 
 class ChallengeRequestPage extends Component{
+  _isMounted = false
   constructor(props){
     super(props);
     this.state = {
@@ -17,9 +18,16 @@ class ChallengeRequestPage extends Component{
   }
 
   componentDidMount(){
+    this._isMounted = true;
     database.ref(`pending-challenge-requests`).on('value', (snapshot) => {
-      this.setState(byPropKey('requests', snapshot.val()));
+      if(this._isMounted) {
+        this.setState(byPropKey('requests', snapshot.val()));
+      }
     });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render(){
@@ -45,6 +53,7 @@ class ChallengeRequestPage extends Component{
 }
 
 class ChallengeRequest extends Component{
+  _isMounted = false;
   constructor(props){
     super(props);
     this.state = {...props};
@@ -55,21 +64,30 @@ class ChallengeRequest extends Component{
   }
 
   componentDidMount(){
+    this._isMounted = true;
     this.getUserInfo(this.state.cKey, 'challenger');
     this.getUserInfo(this.state.oKey, 'opponent');
     this.getGamesReport('challenger');
     this.getGamesReport('opponent');
   }
 
+  componentWillUnmount(){
+    this._isMounted = false;
+  }
+
   getUserInfo(uid, stateKey){
     database.ref(`users/${uid}`).once('value', (snapshot) => {
-      this.setState(byPropKey(stateKey, snapshot.val()));
+      if(this._isMounted) {
+        this.setState(byPropKey(stateKey, snapshot.val()));
+      }
     });
   }
 
   getGamesReport(role){
     database.ref(`pending-challenge-requests/${this.state.requestKey}/${role}-report`).on('value', (snapshot) => {
-      this.setState(byPropKey(role + "Report", snapshot.val()));
+      if(this._isMounted) {
+        this.setState(byPropKey(role + "Report", snapshot.val()));
+      }
     });
   }
 
@@ -180,6 +198,7 @@ const HomeChallengeRequestList = ({ userChallengeRequestList, type }) =>
   </div>
 
 class HomeChallengeRequest extends Component{
+  _isMounted = false;
   constructor(props){
     super(props);
     this.type = props.type;
@@ -188,6 +207,7 @@ class HomeChallengeRequest extends Component{
       // Ordered list of game scores, game 1: challenger, opponent; game2: ...
       gameScores: ['', '', '', '', '', ''],
       alert: null,
+      isOwner: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -195,12 +215,23 @@ class HomeChallengeRequest extends Component{
   }
 
   componentDidMount(){
+    this._isMounted = true;
+    database.ref(`pending-challenge-requests/${this.key}`).once('value', (snapshot) => {
+      if(this._isMounted && (firebase.auth.currentUser.uid === snapshot.val().challenger)) {
+        this.setState({isOwner: true});
+      }
+    });
+
     database.ref(`pending-challenge-requests/${this.key}/${this.type}-report/gameScores`).on('value', (snapshot) => {
       const gameScores = snapshot.val();
-      if(!!gameScores){
+      if(!!gameScores && this._isMounted){
         this.setState({gameScores: gameScores});
       }
     });
+  }
+
+  componentWillUnmount(){
+    this._isMounted = false;
   }
 
   handleChange(evt, ind){
@@ -234,6 +265,17 @@ class HomeChallengeRequest extends Component{
       this.setState({alert: <Alert text={'That match is invalid'} color={'#ff0000'}/>});
       setTimeout(() => {this.setState({alert: null})}, 2000);
     }
+  }
+
+  onDelete(evt) {
+    evt.preventDefault();
+    database.ref(`pending-challenge-requests/${this.key}`).remove(function(error) {
+      if(error) {
+        console.log("Deleting challenge request error");
+      } else {
+        console.log("Challenge request successfully delete");
+      }
+    });
   }
 
   /**
@@ -299,6 +341,7 @@ class HomeChallengeRequest extends Component{
         <form>
           {gameInputs}
           <div className="home-cr-match-submit">
+            <Button className="home-cr-match-cancel" disabled={!this.state.isOwner} onClick={event=>this.onDelete(event)}>Cancel</Button>
             <Button className="home-cr-match-submit-button" type="submit" onClick={this.onSubmit}>Submit Scores</Button>
           </div>
         </form>

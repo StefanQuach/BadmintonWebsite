@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { firebase, db, auth } from '../firebase'
 import { db as database } from '../firebase/firebase';
-import { byPropKey, adminCheck, convertUnixTime } from '../helpers/helpers';
+import { byPropKey, adminCheck } from '../helpers/helpers';
 import { withRouter } from 'react-router-dom';
 import withAuthorization from './withAuthorization';
 import * as routes from '../constants/routes';
@@ -80,9 +80,9 @@ class CreateAnnouncementPage extends Component{
               type="checkbox"/> Check this to make the announcement public
           </div>
           <div className="form-group">
-            <button disabled={isInvalid} type="submit">
+            <Button disabled={isInvalid} type="submit">
               Create Announcement
-            </button>
+            </Button>
           </div>
         </form>
       </div>
