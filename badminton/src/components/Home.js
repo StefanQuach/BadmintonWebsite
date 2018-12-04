@@ -28,7 +28,6 @@ class HomePage extends Component{
       .on('value', (snapshot) => {
       if(this._isMounted) {
         var announcements = [];
-        let mountBool = this._isMounted;
         snapshot.forEach(function(childSnap){
           var announcement = childSnap.val()
           announcement.key = childSnap.key;

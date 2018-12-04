@@ -52,7 +52,7 @@ const UserTable = ({ info }) =>
     {info.admin && <div>You are an admin</div>}
     <div>{info.username}</div>
     <div>{info.email}</div>
-    <div>Rank: {info.rank}</div>
+    <div>Rank: {info.rank === -1000 ? 'Deactivated' : info.rank}</div>
   </div>
 
 class ChangeEmailForm extends Component{

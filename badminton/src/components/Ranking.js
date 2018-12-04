@@ -76,7 +76,6 @@ class Ranks extends Component{
     if(confirmation === passphrase){
       database.ref(`users/${uid}`).once('value', (snapshot) => {
         userRank = snapshot.val().rank;
-        console.log("rank before deactivation:" + userRank);
       });
       database.ref(`users/${uid}`).update({ // setting the rank to -1000 means deactivated
         rank:-1000,
@@ -89,9 +88,7 @@ class Ranks extends Component{
             .orderByChild('rank')
             .startAt(userRank)
             .once('value', (snapshot) => {
-              console.log(snapshot.val());
               snapshot.forEach(function(childSnap) {
-                console.log(childSnap.val());
                 let currentUser = childSnap.val();
                 let newRank = currentUser.rank - 1;
                 database.ref(`users/`+childSnap.key).update({
@@ -143,24 +140,24 @@ class Ranks extends Component{
             var users = this.state.users;
             if(this._isMounted) {
               this.setState(byPropKey('currentUser', snapUser));
-              database.ref(`pending-challenge-requests`).on('value', (requestSnap) => {
-                var requests = requestSnap.val();
-                for(var i = 0; i<users.length; i++){
-                  var rankDiff = rank - users[i].rank;
-                  if(rankDiff > 0 && rankDiff <= config.RANK_DIST){
-                    users[i].challengeButton = true;
-                  }
-                  for(var key in requests){
-                    if(requests[key].challenger === id && requests[key].opponent === users[i].key){
-                      users[i].challengeButton = false;
-                    }
-                  }
-                }
-                if(this._isMounted) {
-                  this.setState(byPropKey('users', users));
-                }
-              });
             }
+            database.ref(`pending-challenge-requests`).on('value', (requestSnap) => {
+              var requests = requestSnap.val();
+              for(var i = 0; i<users.length; i++){
+                var rankDiff = rank - users[i].rank;
+                if(rankDiff > 0 && rankDiff <= config.RANK_DIST){
+                  users[i].challengeButton = true;
+                }
+                for(var key in requests){
+                  if(requests[key].challenger === id && requests[key].opponent === users[i].key){
+                    users[i].challengeButton = false;
+                  }
+                }
+              }
+              if(this._isMounted) {
+                this.setState(byPropKey('users', users));
+              }
+            });
           });
         });
       }

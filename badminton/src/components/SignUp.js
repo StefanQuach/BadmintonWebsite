@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
   Link,
-  withRouter,
 } from 'react-router-dom';
 import * as helpers from '../helpers/helpers';
 
+import withAuthorization from './withAuthorization';
 import { auth } from '../firebase/firebase';
 import { db } from '../firebase';
 import * as routes from '../constants/routes';
@@ -125,7 +125,9 @@ const SignUpLink = () =>
     <Link to={routes.SIGN_UP}>Sign Up</Link>
   </p>
 
-export default withRouter(SignUpPage);
+const authCondition = (authUser) => !authUser;
+
+export default withAuthorization(authCondition)(SignUpPage);
 
 export {
   SignUpForm,
